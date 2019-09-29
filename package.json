@@ -1,0 +1,10 @@
+{
+  "name": "react-wiring-library",
+  "version": "0.0.1",
+  "description": "A library for making react-testing-library-wiring",
+  "main": "index.js",
+  "repository": "https://github.com/cbranch101/react-wiring-library",
+  "author": "Clay Branch",
+  "license": "MIT",
+  "private": false
+}
