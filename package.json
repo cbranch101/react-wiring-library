@@ -1,10 +1,39 @@
 {
-  "name": "react-wiring-library",
-  "version": "0.0.1",
-  "description": "A library for making react-testing-library-wiring",
-  "main": "index.js",
-  "repository": "https://github.com/cbranch101/react-wiring-library",
-  "author": "Clay Branch",
-  "license": "MIT",
-  "private": false
+    "name": "react-wiring-library",
+    "version": "0.0.1",
+    "description": "A library for making react-testing-library-wiring",
+    "main": "dist/index.js",
+    "module": "dist/react-wiring-library.esm.js",
+    "repository": "https://github.com/cbranch101/react-wiring-library",
+    "author": "Clay Branch",
+    "license": "MIT",
+    "private": false,
+    "scripts": {
+        "build": "kcd-scripts build --bundle",
+        "test": "kcd-scripts test",
+        "validate": "kcd-scripts validate"
+    },
+    "devDependencies": {
+        "kcd-scripts": "^1.7.0",
+        "react-testing-library": "7.0.1"
+    },
+    "eslintConfig": {
+        "extends": "./node_modules/kcd-scripts/eslint.js",
+        "rules": {
+            "react/prop-types": "off",
+            "no-useless-rename": "off",
+            "max-lines-per-function": "off",
+            "import/no-unassigned-import": "off",
+            "import/named": "off"
+        },
+        "parserOptions": {
+          "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+          },
+          "ecmaVersion": 6
+        }
+    },
+    "dependencies": {
+        "@babel/runtime": "7.6.0"
+    }
 }
