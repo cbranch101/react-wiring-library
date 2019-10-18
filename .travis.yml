@@ -13,8 +13,6 @@ jobs:
     - stage: Build and test
       script:
         - yarn validate
-        - yarn test
-        - yarn build
     - stage: npm release
       script: yarn build
       deploy:
@@ -24,7 +22,6 @@ jobs:
         skip_cleanup: true
         on:
           tags: true
-after_success: kcd-scripts travis-after-success
 branches:
   only:
     - master
