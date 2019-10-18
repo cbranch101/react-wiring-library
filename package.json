@@ -1,6 +1,6 @@
 {
     "name": "react-wiring-library",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "A library for making react-testing-library-wiring",
     "main": "dist/index.js",
     "module": "dist/react-wiring-library.esm.js",
