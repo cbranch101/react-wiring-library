@@ -14,3 +14,9 @@ script: npm run validate
 after_success: kcd-scripts travis-after-success
 branches:
   only: master
+deploy:
+  provider: npm
+  email: 'YOUR_EMAIL_ADDRESS'
+  api_key: 'YOUR_AUTH_TOKEN'
+  on:
+    tags: true
