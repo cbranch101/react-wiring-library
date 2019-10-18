@@ -6,18 +6,26 @@ cache:
 notifications:
   email: false
 node_js:
-  - '8'
   - '10'
-  - '12'
-install: npm install
-script: npm run validate
+install: yarn install
+jobs:
+  include:
+    - stage: Build and test
+      script:
+        - yarn validate
+        - yarn test
+        - yarn build
+    - stage: npm release
+      script: yarn build
+      deploy:
+        provider: npm
+        email: '$YOUR_EMAIL_ADDESS'
+        api_key: '$YOUR_AUTH_TOKEN'
+        skip_cleanup: true
+        on:
+          tags: true
 after_success: kcd-scripts travis-after-success
 branches:
-  only: master
-deploy:
-  provider: npm
-  email: 'YOUR_EMAIL_ADDRESS'
-  api_key: 'YOUR_AUTH_TOKEN'
-  on:
-    branch: master
-    tags: true
+  only:
+    - master
+    - /^v[0-9]+.*$/
