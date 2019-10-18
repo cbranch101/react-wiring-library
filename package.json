@@ -2,13 +2,16 @@
     "name": "react-wiring-library",
     "version": "0.0.1",
     "description": "A library for making react-testing-library-wiring",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "module": "dist/react-wiring-library.esm.js",
     "repository": "https://github.com/cbranch101/react-wiring-library",
     "author": "Clay Branch",
     "license": "MIT",
     "private": false,
     "scripts": {
-        "build": "kcd-scripts build"
+        "build": "kcd-scripts build --bundle",
+        "test": "kcd-scripts test",
+        "validate": "kcd-scripts validate"
     },
     "devDependencies": {
         "kcd-scripts": "^1.7.0",
