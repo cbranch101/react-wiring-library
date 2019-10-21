@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buildWiring helper should correctly handler serializers: 10 is added to the third row 1`] = `
+Some counters
+-first:  0
+-second:  0 [Reset]
+-third:  10 [Add ten]
+Total value of counters: 10
+`;
+
+exports[`buildWiring helper should correctly handler serializers: correctly serializes after calling buildWiring 1`] = `
+Some counters
+-first:  0
+-second:  0 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 0
+`;
+
+exports[`buildWiring helper should correctly handler serializers: counter decreases on first row 1`] = `
+Some counters
+-first:  0
+-second:  0 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 0
+`;
+
+exports[`buildWiring helper should correctly handler serializers: counter increases on first row 1`] = `
+Some counters
+-first:  1
+-second:  0 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 1
+`;
+
+exports[`buildWiring helper should correctly handler serializers: counter increases on second row 1`] = `
+Some counters
+-first:  0
+-second:  1 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 1
+`;
+
+exports[`buildWiring helper should correctly handler serializers: counter resets to zero on second row 1`] = `
+Some counters
+-first:  0
+-second:  0 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 0
+`;

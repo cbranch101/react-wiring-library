@@ -1,6 +1,6 @@
 {
     "name": "react-wiring-library",
-    "version": "0.0.4",
+    "version": "0.0.10",
     "description": "A library for making react-testing-library-wiring",
     "main": "dist/index.js",
     "module": "dist/react-wiring-library.esm.js",
@@ -9,22 +9,35 @@
     "license": "MIT",
     "private": false,
     "scripts": {
-        "build": "kcd-scripts build --bundle",
+        "build": "kcd-scripts build --no-clean",
         "test": "kcd-scripts test",
         "validate": "kcd-scripts validate"
     },
     "devDependencies": {
+        "eslint-plugin-react": "^7.16.0",
         "kcd-scripts": "^1.7.0",
+        "react": "16.9.0",
+        "react-dom": "16.9.0",
         "react-testing-library": "7.0.1"
     },
+    "eslintIgnore": [
+        "node_modules",
+        "coverage",
+        "dist",
+        "*.d.ts"
+    ],
     "eslintConfig": {
         "extends": "./node_modules/kcd-scripts/eslint.js",
+        "plugins": [
+            "react"
+        ],
         "rules": {
             "react/prop-types": "off",
             "no-useless-rename": "off",
             "max-lines-per-function": "off",
             "import/no-unassigned-import": "off",
-            "import/named": "off"
+            "import/named": "off",
+            "no-shadow": "off"
         },
         "parserOptions": {
             "ecmaFeatures": {
