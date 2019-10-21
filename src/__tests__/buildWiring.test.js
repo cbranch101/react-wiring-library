@@ -1,7 +1,7 @@
 import React from 'react'
 import {combine} from '../helpers'
 import buildWiring from '../index'
-import CounterList from './CounterList'
+import CounterList from '../CounterList'
 
 const fixture = (
   <CounterList
