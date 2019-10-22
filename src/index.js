@@ -288,6 +288,7 @@ export default (wiring, config = {}) => wiringKeys => {
   })
 
   return getRenderHandler({
+    render: config.render,
     customFunctions: {
       global: globalFunctions => global({...globalFunctions, serialize}),
       withinElement: withinElementFunctions => {
@@ -296,7 +297,7 @@ export default (wiring, config = {}) => wiringKeys => {
         )
         return addExtraFunctions(
           children,
-          updatedWithinElementFunctions,
+          {...withinElementFunctions, ...updatedWithinElementFunctions},
           extend,
         )
       },
