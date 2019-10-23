@@ -15,7 +15,7 @@ export const addAllCustomFunctions = (
     global: getGlobalFunctions = () => ({}),
     withinElement: getWithinElementFunctions = functions => functions,
   } = customFunctions
-  const globalFunctions = getGlobalFunctions()
+  const globalFunctions = getGlobalFunctions(returnedFromWithin)
   return getAllFunctions(
     {
       ...returnedFromWithin,
