@@ -5,9 +5,11 @@ export const combine = (...strings) => {
   return strings.filter(string => string !== undefined).join('\n')
 }
 
-export const isButtonDisabled = button => button.parentNode.disabled
-
-export const addAllCustomFunctions = (val, customFunctions = {}) => {
+export const addAllCustomFunctions = (
+  val,
+  customFunctions = {},
+  customQueries = {},
+) => {
   const returnedFromWithin = within(val)
   const {
     global: getGlobalFunctions = () => ({}),
@@ -21,5 +23,6 @@ export const addAllCustomFunctions = (val, customFunctions = {}) => {
     },
     globalFunctions,
     getWithinElementFunctions,
+    customQueries,
   )
 }

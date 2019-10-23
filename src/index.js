@@ -102,12 +102,21 @@ const getWiringWithTypesApplied = (parent, wiring, functions) => {
   )
 }
 
-const serializeElement = (wiringItem, element, customFunctions) => {
+const serializeElement = (
+  wiringItem,
+  element,
+  customFunctions,
+  customQueries,
+) => {
   const {serialize: defaultSerialize = () => {}} = wiringItem
   if (!element) {
     return defaultSerialize(undefined, {})
   }
-  const returnedFromWithin = addAllCustomFunctions(element, customFunctions)
+  const returnedFromWithin = addAllCustomFunctions(
+    element,
+    customFunctions,
+    customQueries,
+  )
 
   const {children, serialize = () => {}} = getWiringWithTypesApplied(
     element,
@@ -133,7 +142,14 @@ const serializeElement = (wiringItem, element, customFunctions) => {
       })
       const childElements = isMultiple ? query(findValue) : [query(findValue)]
       const childStrings = childElements.map(childElement =>
-        childElement ? serializeElement(child, childElement) : undefined,
+        childElement
+          ? serializeElement(
+              child,
+              childElement,
+              customFunctions,
+              customQueries,
+            )
+          : undefined,
       )
       const baseFullChildName = `${childName}String`
       const fullChildName = isMultiple
@@ -264,7 +280,7 @@ const matchesTestId = (object, testId) => {
 }
 
 export default (wiring, config = {}) => wiringKeys => {
-  const {customFunctions = {}} = config
+  const {customFunctions = {}, customQueries = {}} = config
   const {global = () => ({}), withinElement = funcs => funcs} = customFunctions
   const {children, extend} = wiring
   const serialize = val => {
@@ -276,18 +292,31 @@ export default (wiring, config = {}) => wiringKeys => {
         "Object can't be serialzied,  make sure it's defined in wiring",
       )
     }
-    console.log(serializeElement(children[foundChildName], val))
+    console.log(
+      serializeElement(
+        children[foundChildName],
+        val,
+        customFunctions,
+        customQueries,
+      ),
+    )
   }
   wiringKeys.forEach(key => {
     expect.addSnapshotSerializer({
       test: val => matchesTestId(val, wiring.children[key].findValue),
       print: val => {
-        return serializeElement(wiring.children[key], val)
+        return serializeElement(
+          wiring.children[key],
+          val,
+          customFunctions,
+          customQueries,
+        )
       },
     })
   })
 
   return getRenderHandler({
+    customQueries,
     render: config.render,
     customFunctions: {
       global: globalFunctions => global({...globalFunctions, serialize}),

@@ -1,5 +1,4 @@
 import * as baseRootFunctions from 'react-testing-library'
-import customQueries from './customQueries'
 
 const {
   waitForElement,
@@ -7,10 +6,46 @@ const {
   within,
   render: defaultRender,
   fireEvent,
+  queryHelpers,
+  buildQueries,
   waitForDomChange,
 } = baseRootFunctions
 
-export const addCustomQueriesToFunctions = (funcs, val) => {
+const {getElementError, getMultipleElementsFoundError} = queryHelpers
+
+const getQueriesFromFunction = (func, type) => {
+  const [queryBy, getAllBy, getBy, findAllBy, findBy] = buildQueries(
+    func,
+    getMultipleElementsFoundError,
+    getElementError,
+  )
+
+  const namedQueries = {
+    queryAllBy: func,
+    queryBy,
+    getAllBy,
+    getBy,
+    findAllBy,
+    findBy,
+  }
+
+  return Object.keys(namedQueries).reduce(
+    (memo, queryName) => ({
+      ...memo,
+      [`${queryName}${type}`]: namedQueries[queryName],
+    }),
+    {},
+  )
+}
+
+export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
+  const customQueries = Object.keys(queryMap).reduce((memo, type) => {
+    const func = queryMap[type]
+    return {
+      ...memo,
+      ...getQueriesFromFunction(func, type),
+    }
+  }, {})
   const wrappedCustomQueries = Object.keys(customQueries).reduce(
     (wrapped, queryName) => ({
       ...wrapped,
@@ -28,12 +63,17 @@ export const getAllFunctions = (
   baseFunctions,
   globalFunctions = {},
   getWithinElementCustomFunctions = functions => functions,
+  customQueries = {},
 ) => {
   const {container, baseElement = document.body} = baseFunctions
   const testId = container && container.getAttribute('data-testid')
   const hasAttribute = attribute =>
     container && !!container.getAttribute(`data-${attribute}`)
-  const funcs = addCustomQueriesToFunctions(baseFunctions, container)
+  const funcs = addCustomQueriesToFunctions(
+    baseFunctions,
+    customQueries,
+    container,
+  )
   const {debug, getByTestId} = funcs
 
   const clickElement = element => fireEvent.click(element)
@@ -55,9 +95,7 @@ export const getAllFunctions = (
     'TestId',
     'AltText',
     'PlaceholderText',
-    'IconName',
-    'Tag',
-    'ClassStartLastResort',
+    ...Object.keys(customQueries),
   ]
 
   const builtFunctions = baseTypes.reduce((memo, typeName) => {
@@ -111,6 +149,7 @@ export const getAllFunctions = (
       },
       globalFunctions,
       getWithinElementCustomFunctions,
+      customQueries,
     )
   }
 
@@ -143,6 +182,7 @@ export const getAllFunctions = (
 
 export default ({
   render = defaultRender,
+  customQueries,
   customFunctions: {
     global: getGlobalCustomFunctions,
     withinElement: getWithinElementCustomFunctions,
@@ -155,5 +195,6 @@ export default ({
     baseFunctions,
     globalFunctions,
     getWithinElementCustomFunctions,
+    customQueries,
   )
 }
