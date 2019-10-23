@@ -5,11 +5,7 @@ export const combine = (...strings) => {
   return strings.filter(string => string !== undefined).join('\n')
 }
 
-export const addAllCustomFunctions = (
-  val,
-  customFunctions = {},
-  customQueries = {},
-) => {
+export const addAllCustomFunctions = (val, customFunctions, customQueries) => {
   const returnedFromWithin = within(val)
   const {
     global: getGlobalFunctions = () => ({}),

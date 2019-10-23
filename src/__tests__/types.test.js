@@ -7,7 +7,6 @@ afterEach(() => {
     body.removeChild(body.firstChild)
   }
 })
-
 const Item = ({name, type, details, indentType}) => {
   return (
     <li data-type={type} data-testid="item" data-indent-type={indentType}>

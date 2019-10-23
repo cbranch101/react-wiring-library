@@ -1,7 +1,13 @@
+import {cleanup} from 'react-testing-library'
 import React from 'react'
 import {combine} from '../helpers'
 import buildWiring from '../index'
 import CounterList from '../CounterList'
+
+afterEach(() => {
+  jest.clearAllMocks()
+  cleanup()
+})
 
 const fixture = (
   <CounterList
@@ -176,5 +182,36 @@ describe('buildWiring helper', () => {
       expect(counterContainer).toMatchSnapshot('10 is added to the third row')
     }
     await assertThirdRow()
+
+    const assertErrors = async () => {
+      await expect(findCounter({index: 10})).rejects.toThrow(
+        'You tried to find index 10 in findCounter but 3 is the highest index',
+      )
+      await expect(findCounter({filter: () => false})).rejects.toThrow(
+        "the filter function passed into findCounter didn't find anything",
+      )
+      await expect(findCounter({filter: () => true})).rejects.toThrow(
+        'the filter function passed into findCounter returned 3 elements, it should only return one',
+      )
+      await expect(findCounter()).rejects.toThrow(
+        'You tried to call findCounter which was set as isMultiple, without providing either an index, or a filter function',
+      )
+    }
+
+    await assertErrors()
+  })
+  test('should be possible to call manually call serialize', async () => {
+    jest.spyOn(console, 'log')
+    const getRender = buildWiring(wiring)
+    const render = getRender(['counterContainer'])
+    const {findCounterList, serialize} = render(fixture)
+    const {counterContainer} = await findCounterList()
+    serialize(counterContainer)
+    expect(console.log.mock.calls[0][0]).toMatchSnapshot(
+      'initial render passed into console.log',
+    )
+    expect(() => serialize({foo: 'bar'})).toThrow(
+      "Object can't be serialzied,  make sure it's defined in wiring",
+    )
   })
 })

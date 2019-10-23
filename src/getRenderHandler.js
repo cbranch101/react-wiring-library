@@ -61,14 +61,12 @@ export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
 
 export const getAllFunctions = (
   baseFunctions,
-  globalFunctions = {},
-  getWithinElementCustomFunctions = functions => functions,
-  customQueries = {},
+  globalFunctions,
+  getWithinElementCustomFunctions,
+  customQueries,
 ) => {
   const {container, baseElement = document.body} = baseFunctions
   const testId = container && container.getAttribute('data-testid')
-  const hasAttribute = attribute =>
-    container && !!container.getAttribute(`data-${attribute}`)
   const funcs = addCustomQueriesToFunctions(
     baseFunctions,
     customQueries,
@@ -80,15 +78,15 @@ export const getAllFunctions = (
 
   const typeIntoElement = (text, element) => {
     fireEvent.change(element, {target: {value: text}})
-    return waitForDomChange()
+  }
+
+  const focusElement = element => {
+    fireEvent.focus(element)
   }
 
   const blurElement = element => {
     fireEvent.blur(element)
   }
-
-  const waitForMS = ms =>
-    new Promise(resolve => setTimeout(() => resolve(), ms))
 
   const baseTypes = [
     'Text',
@@ -158,12 +156,12 @@ export const getAllFunctions = (
   const newFunctions = {
     ...funcs,
     testId,
-    hasAttribute,
     ...builtFunctions,
     ...globalFunctions,
     getTextContent,
     getTextContents: testIds => testIds.map(getTextContent),
     fireEvent,
+    focusElement,
     blurElement,
     withinBaseElement,
     wait,
@@ -171,7 +169,6 @@ export const getAllFunctions = (
     typeIntoElement,
     clickElement,
     waitForDomChange,
-    waitForMS,
   }
   const withinElementFunctions = getWithinElementCustomFunctions(newFunctions)
   return {

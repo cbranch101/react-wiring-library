@@ -102,9 +102,6 @@ const serializeElement = (
   customFunctions,
   customQueries,
 ) => {
-  if (!element) {
-    return undefined
-  }
   const returnedFromWithin = addAllCustomFunctions(
     element,
     customFunctions,
@@ -162,8 +159,14 @@ const serializeElement = (
   })
 }
 
-const getDefaultFunctions = (functions, element) => ({
-  click: () => functions.clickElement(element),
+const getDefaultFunctions = (
+  {clickElement, focusElement, blurElement, typeIntoElement},
+  element,
+) => ({
+  click: () => clickElement(element),
+  focus: () => focusElement(element),
+  typeInto: text => typeIntoElement(text, element),
+  blur: () => blurElement(element),
 })
 
 const addExtraFunctions = (
@@ -172,10 +175,9 @@ const addExtraFunctions = (
   extend = () => ({}),
   parent,
 ) => {
-  const {within, clickElement} = baseFunctions
+  const {within} = baseFunctions
   const functions = {
     ...baseFunctions,
-    click: () => clickElement(parent),
   }
 
   const defaultFunctions = getDefaultFunctions(functions, parent)
@@ -206,7 +208,13 @@ const addExtraFunctions = (
           return foundElements[0]
         }
         if (index !== undefined) {
-          return foundElements[index]
+          const element = foundElements[index]
+          if (!element) {
+            throw new Error(
+              `You tried to find index ${index} in ${findName} but ${foundElements.length} is the highest index`,
+            )
+          }
+          return element
         }
         if (filter !== undefined) {
           const filteredElements = foundElements.filter(element =>
@@ -226,7 +234,9 @@ const addExtraFunctions = (
           }
           return filteredElements[0]
         }
-        return null
+        throw new Error(
+          `You tried to call ${findName} which was set as isMultiple, without providing either an index, or a filter function`,
+        )
       }
       const element = await performFind()
 
@@ -312,7 +322,13 @@ export default (wiring, config = {}) => wiringKeys => {
     customQueries,
     render: config.render,
     customFunctions: {
-      global: globalFunctions => global({...globalFunctions, serialize}),
+      global: globalFunctions => {
+        const output = global({...globalFunctions, serialize})
+        return {
+          ...output,
+          serialize,
+        }
+      },
       withinElement: withinElementFunctions => {
         const updatedWithinElementFunctions = withinElement(
           withinElementFunctions,

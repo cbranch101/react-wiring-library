@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`buildWiring helper should be possible to call manually call serialize: initial render passed into console.log 1`] = `
+"Some counters
+-first:  0
+-second:  0 [Reset]
+-third:  0 [Add ten]
+Total value of counters: 0"
+`;
+
 exports[`buildWiring helper should correctly handler serializers: 10 is added to the third row 1`] = `
 Some counters
 -first:  0
