@@ -65,6 +65,9 @@ const getWiringWithTypesApplied = (parent, wiring, functions) => {
   }
 
   const applyTypeToSerialize = () => {
+    if (!serializeForType) {
+      return serialize
+    }
     return (val, functions) => {
       const baseString = serialize(val, functions)
       return serializeForType(val, functions, baseString)
