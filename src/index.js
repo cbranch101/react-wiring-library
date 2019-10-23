@@ -21,13 +21,7 @@ const getQueryFunction = ({
 }
 
 const getWiringWithTypesApplied = (parent, wiring, functions) => {
-  const {
-    getCurrentType,
-    types,
-    extend = () => ({}),
-    children,
-    serialize = () => {},
-  } = wiring
+  const {getCurrentType, types, extend, children, serialize = () => {}} = wiring
   if (!getCurrentType || !types) {
     return wiring
   }
@@ -71,9 +65,6 @@ const getWiringWithTypesApplied = (parent, wiring, functions) => {
   }
 
   const applyTypeToSerialize = () => {
-    if (!serializeForType) {
-      return serialize
-    }
     return (val, functions) => {
       const baseString = serialize(val, functions)
       return serializeForType(val, functions, baseString)
@@ -108,9 +99,8 @@ const serializeElement = (
   customFunctions,
   customQueries,
 ) => {
-  const {serialize: defaultSerialize = () => {}} = wiringItem
   if (!element) {
-    return defaultSerialize(undefined, {})
+    return undefined
   }
   const returnedFromWithin = addAllCustomFunctions(
     element,
@@ -118,7 +108,7 @@ const serializeElement = (
     customQueries,
   )
 
-  const {children, serialize = () => {}} = getWiringWithTypesApplied(
+  const {children, serialize} = getWiringWithTypesApplied(
     element,
     wiringItem,
     returnedFromWithin,
