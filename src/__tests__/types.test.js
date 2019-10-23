@@ -8,9 +8,9 @@ afterEach(() => {
   }
 })
 
-const Item = ({name, type, details}) => {
+const Item = ({name, type, details, indentType}) => {
   return (
-    <li data-type={type} data-testid="item">
+    <li data-type={type} data-testid="item" data-indent-type={indentType}>
       <span data-testid="name">{name}</span>
       {type === 'details' && <span data-testid="details">{details}</span>}
     </li>
@@ -101,6 +101,47 @@ const typedWiringWithoutSerialize = {
   },
 }
 
+const multiLevelTypeWiring = {
+  ...wiring,
+  children: {
+    ...wiring.children,
+    list: {
+      ...wiring.children.list,
+      children: {
+        ...wiring.children.list.children,
+        item: {
+          ...wiring.children.list.children.item,
+          types: {
+            ...wiring.children.list.children.item.types,
+            indent: {
+              getCurrentType: val => val.getAttribute('data-indent-type'),
+              types: {
+                dot: {
+                  serialize: (val, functions, baseString) =>
+                    `............${baseString}`,
+                },
+                dash: {
+                  serialize: (val, functions, baseString) =>
+                    `------------${baseString}`,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
+const multiLevelFixture = (
+  <List
+    items={[
+      {name: 'Indent One', type: 'indent', indentType: 'dash'},
+      {name: 'Indent Two', type: 'indent', indentType: 'dot'},
+    ]}
+  />
+)
+
 describe('Typed Wiring', () => {
   describe('if providing a type without extend', () => {
     test('should just not extend anything', async () => {
@@ -125,6 +166,15 @@ describe('Typed Wiring', () => {
       const getRender = buildWiring(typedWiringWithoutSerialize)
       const render = getRender(['list'])
       const {findList} = render(typeWithoutExtendFixture)
+      const {list} = await findList()
+      expect(list).toMatchSnapshot('on initial render')
+    })
+  })
+  describe('if providing a type that has further types beneath in', () => {
+    test('extend, serialize, and children should chain through', async () => {
+      const getRender = buildWiring(multiLevelTypeWiring)
+      const render = getRender(['list'])
+      const {findList} = render(multiLevelFixture)
       const {list} = await findList()
       expect(list).toMatchSnapshot('on initial render')
     })
