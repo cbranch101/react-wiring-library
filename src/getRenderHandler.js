@@ -5,7 +5,7 @@ const {
   waitForElement,
   wait,
   within,
-  render,
+  render: defaultRender,
   fireEvent,
   waitForDomChange,
 } = baseRootFunctions
@@ -27,7 +27,7 @@ export const addCustomQueriesToFunctions = (funcs, val) => {
 export const getAllFunctions = (
   baseFunctions,
   globalFunctions = {},
-  getWithinElementCustomFunctions = () => ({}),
+  getWithinElementCustomFunctions = functions => functions,
 ) => {
   const {container, baseElement = document.body} = baseFunctions
   const testId = container && container.getAttribute('data-testid')
@@ -142,12 +142,13 @@ export const getAllFunctions = (
 }
 
 export default ({
+  render = defaultRender,
   customFunctions: {
     global: getGlobalCustomFunctions,
     withinElement: getWithinElementCustomFunctions,
   },
-}) => renderedComponent => {
-  const baseFunctions = render(renderedComponent)
+}) => (...args) => {
+  const baseFunctions = render(...args)
   const globalFunctions = getGlobalCustomFunctions(baseFunctions)
 
   return getAllFunctions(
