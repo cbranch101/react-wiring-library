@@ -7,9 +7,6 @@ const RenderInBody = ({render}) => {
 
 const Counter = ({type, setCount, name, count, increment, decrement}) => {
   const renderType = () => {
-    if (type === 'default') {
-      return null
-    }
     if (type === 'reset') {
       return <button onClick={() => setCount(() => 0)}>Reset</button>
     }

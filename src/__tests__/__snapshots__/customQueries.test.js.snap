@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Queries custom queries should work with all built in functions: after hiding icons 1`] = `
+[Open]
+Page: 0
+`;
+
+exports[`Custom Queries custom queries should work with all built in functions: after showing icons 1`] = `
+[Close]
+⏩
+⏪
+Page: 0
+`;
+
+exports[`Custom Queries custom queries should work with all built in functions: after showing icons and going forward 1`] = `
+[Close]
+⏩
+⏪
+Page: 1
+`;
+
+exports[`Custom Queries custom queries should work with all built in functions: on initial load 1`] = `
+[Open]
+Page: 0
+`;

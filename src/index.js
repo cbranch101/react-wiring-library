@@ -29,11 +29,11 @@ const getWiringWithTypesApplied = (parent, wiring, functions) => {
     serialize = () => {},
   } = wiring
   if (!getCurrentType || !types) {
-    return wiring
+    return {...wiring, extend, serialize}
   }
   const type = getCurrentType(parent, functions)
   if (!type) {
-    return wiring
+    return {...wiring, extend, serialize}
   }
   const {
     types: typesForType,
@@ -102,14 +102,19 @@ const getWiringWithTypesApplied = (parent, wiring, functions) => {
   )
 }
 
-const serializeElement = (wiringItem, element, customFunctions) => {
-  const {serialize: defaultSerialize = () => {}} = wiringItem
-  if (!element) {
-    return defaultSerialize(undefined, {})
-  }
-  const returnedFromWithin = addAllCustomFunctions(element, customFunctions)
+const serializeElement = (
+  wiringItem,
+  element,
+  customFunctions,
+  customQueries,
+) => {
+  const returnedFromWithin = addAllCustomFunctions(
+    element,
+    customFunctions,
+    customQueries,
+  )
 
-  const {children, serialize = () => {}} = getWiringWithTypesApplied(
+  const {children, serialize} = getWiringWithTypesApplied(
     element,
     wiringItem,
     returnedFromWithin,
@@ -133,7 +138,14 @@ const serializeElement = (wiringItem, element, customFunctions) => {
       })
       const childElements = isMultiple ? query(findValue) : [query(findValue)]
       const childStrings = childElements.map(childElement =>
-        childElement ? serializeElement(child, childElement) : undefined,
+        childElement
+          ? serializeElement(
+              child,
+              childElement,
+              customFunctions,
+              customQueries,
+            )
+          : undefined,
       )
       const baseFullChildName = `${childName}String`
       const fullChildName = isMultiple
@@ -153,8 +165,14 @@ const serializeElement = (wiringItem, element, customFunctions) => {
   })
 }
 
-const getDefaultFunctions = (functions, element) => ({
-  click: () => functions.clickElement(element),
+const getDefaultFunctions = (
+  {clickElement, focusElement, blurElement, typeIntoElement},
+  element,
+) => ({
+  click: () => clickElement(element),
+  focus: () => focusElement(element),
+  typeInto: text => typeIntoElement(text, element),
+  blur: () => blurElement(element),
 })
 
 const addExtraFunctions = (
@@ -163,10 +181,9 @@ const addExtraFunctions = (
   extend = () => ({}),
   parent,
 ) => {
-  const {within, clickElement} = baseFunctions
+  const {within} = baseFunctions
   const functions = {
     ...baseFunctions,
-    click: () => clickElement(parent),
   }
 
   const defaultFunctions = getDefaultFunctions(functions, parent)
@@ -197,7 +214,13 @@ const addExtraFunctions = (
           return foundElements[0]
         }
         if (index !== undefined) {
-          return foundElements[index]
+          const element = foundElements[index]
+          if (!element) {
+            throw new Error(
+              `You tried to find index ${index} in ${findName} but ${foundElements.length} is the highest index`,
+            )
+          }
+          return element
         }
         if (filter !== undefined) {
           const filteredElements = foundElements.filter(element =>
@@ -217,13 +240,15 @@ const addExtraFunctions = (
           }
           return filteredElements[0]
         }
-        return null
+        throw new Error(
+          `You tried to call ${findName} which was set as isMultiple, without providing either an index, or a filter function`,
+        )
       }
       const element = await performFind()
 
       const returnedFromWithin = within(element)
       const defaultFunctions = getDefaultFunctions(returnedFromWithin, element)
-      const {children, extend = () => ({})} = getWiringWithTypesApplied(
+      const {children, extend} = getWiringWithTypesApplied(
         element,
         wiring,
         returnedFromWithin,
@@ -264,7 +289,7 @@ const matchesTestId = (object, testId) => {
 }
 
 export default (wiring, config = {}) => wiringKeys => {
-  const {customFunctions = {}} = config
+  const {customFunctions = {}, customQueries = {}} = config
   const {global = () => ({}), withinElement = funcs => funcs} = customFunctions
   const {children, extend} = wiring
   const serialize = val => {
@@ -276,21 +301,40 @@ export default (wiring, config = {}) => wiringKeys => {
         "Object can't be serialzied,  make sure it's defined in wiring",
       )
     }
-    console.log(serializeElement(children[foundChildName], val))
+    console.log(
+      serializeElement(
+        children[foundChildName],
+        val,
+        customFunctions,
+        customQueries,
+      ),
+    )
   }
   wiringKeys.forEach(key => {
     expect.addSnapshotSerializer({
       test: val => matchesTestId(val, wiring.children[key].findValue),
       print: val => {
-        return serializeElement(wiring.children[key], val)
+        return serializeElement(
+          wiring.children[key],
+          val,
+          customFunctions,
+          customQueries,
+        )
       },
     })
   })
 
   return getRenderHandler({
+    customQueries,
     render: config.render,
     customFunctions: {
-      global: globalFunctions => global({...globalFunctions, serialize}),
+      global: globalFunctions => {
+        const output = global({...globalFunctions, serialize})
+        return {
+          ...output,
+          serialize,
+        }
+      },
       withinElement: withinElementFunctions => {
         const updatedWithinElementFunctions = withinElement(
           withinElementFunctions,

@@ -37,7 +37,8 @@
             "max-lines-per-function": "off",
             "import/no-unassigned-import": "off",
             "import/named": "off",
-            "no-shadow": "off"
+            "no-shadow": "off",
+            "jsx-a11y/click-events-have-key-events": "off"
         },
         "parserOptions": {
             "ecmaFeatures": {

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Default functions returned with all wiring focus, blur and typeInto, should behave as expected: after blurring 1`] = `[Some stuff]`;
+
+exports[`Default functions returned with all wiring focus, blur and typeInto, should behave as expected: after calling focus 1`] = `[Focused: ]`;
+
+exports[`Default functions returned with all wiring focus, blur and typeInto, should behave as expected: after typing Some stuff 1`] = `[Focused: Some stuff]`;
+
+exports[`Default functions returned with all wiring focus, blur and typeInto, should behave as expected: initial render 1`] = `[]`;

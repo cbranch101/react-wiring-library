@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Typed Wiring if a typed wiring does not provide serialize undefined should be passed into the child type serializers: on initial render 1`] = `undefined Details: This is my details`;
+
+exports[`Typed Wiring if providing a type that has further types beneath in extend, serialize, and children should chain through: on initial render 1`] = `
+------------- Indent One
+............- Indent Two
+`;
+
+exports[`Typed Wiring if providing a type without children should not add any custom children: on initial render 1`] = `--------- Indent Type`;
+
+exports[`Typed Wiring if providing a type without extend should just not extend anything: on initial render 1`] = `- Details Type Details: This is my details`;

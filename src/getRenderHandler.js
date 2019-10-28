@@ -1,5 +1,4 @@
 import * as baseRootFunctions from 'react-testing-library'
-import customQueries from './customQueries'
 
 const {
   waitForElement,
@@ -7,10 +6,46 @@ const {
   within,
   render: defaultRender,
   fireEvent,
+  queryHelpers,
+  buildQueries,
   waitForDomChange,
 } = baseRootFunctions
 
-export const addCustomQueriesToFunctions = (funcs, val) => {
+const {getElementError, getMultipleElementsFoundError} = queryHelpers
+
+const getQueriesFromFunction = (func, type) => {
+  const [queryBy, getAllBy, getBy, findAllBy, findBy] = buildQueries(
+    func,
+    getMultipleElementsFoundError,
+    getElementError,
+  )
+
+  const namedQueries = {
+    queryAllBy: func,
+    queryBy,
+    getAllBy,
+    getBy,
+    findAllBy,
+    findBy,
+  }
+
+  return Object.keys(namedQueries).reduce(
+    (memo, queryName) => ({
+      ...memo,
+      [`${queryName}${type}`]: namedQueries[queryName],
+    }),
+    {},
+  )
+}
+
+export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
+  const customQueries = Object.keys(queryMap).reduce((memo, type) => {
+    const func = queryMap[type]
+    return {
+      ...memo,
+      ...getQueriesFromFunction(func, type),
+    }
+  }, {})
   const wrappedCustomQueries = Object.keys(customQueries).reduce(
     (wrapped, queryName) => ({
       ...wrapped,
@@ -24,40 +59,42 @@ export const addCustomQueriesToFunctions = (funcs, val) => {
   }
 }
 
+export const defaultGlobalFunctions = {
+  clickElement: element => fireEvent.click(element),
+  typeIntoElement: (text, element) => {
+    fireEvent.change(element, {target: {value: text}})
+  },
+  focusElement: element => {
+    fireEvent.focus(element)
+  },
+  blurElement: element => {
+    fireEvent.blur(element)
+  },
+  waitForDomChange,
+}
+
 export const getAllFunctions = (
   baseFunctions,
-  globalFunctions = {},
-  getWithinElementCustomFunctions = functions => functions,
+  globalFunctions,
+  getWithinElementCustomFunctions,
+  customQueries,
 ) => {
   const {container, baseElement = document.body} = baseFunctions
   const testId = container && container.getAttribute('data-testid')
-  const hasAttribute = attribute =>
-    container && !!container.getAttribute(`data-${attribute}`)
-  const funcs = addCustomQueriesToFunctions(baseFunctions, container)
+  const funcs = addCustomQueriesToFunctions(
+    baseFunctions,
+    customQueries,
+    container,
+  )
+  const {clickElement} = globalFunctions
   const {debug, getByTestId} = funcs
-
-  const clickElement = element => fireEvent.click(element)
-
-  const typeIntoElement = (text, element) => {
-    fireEvent.change(element, {target: {value: text}})
-    return waitForDomChange()
-  }
-
-  const blurElement = element => {
-    fireEvent.blur(element)
-  }
-
-  const waitForMS = ms =>
-    new Promise(resolve => setTimeout(() => resolve(), ms))
 
   const baseTypes = [
     'Text',
     'TestId',
     'AltText',
     'PlaceholderText',
-    'IconName',
-    'Tag',
-    'ClassStartLastResort',
+    ...Object.keys(customQueries),
   ]
 
   const builtFunctions = baseTypes.reduce((memo, typeName) => {
@@ -111,6 +148,7 @@ export const getAllFunctions = (
       },
       globalFunctions,
       getWithinElementCustomFunctions,
+      customQueries,
     )
   }
 
@@ -119,20 +157,15 @@ export const getAllFunctions = (
   const newFunctions = {
     ...funcs,
     testId,
-    hasAttribute,
     ...builtFunctions,
-    ...globalFunctions,
     getTextContent,
     getTextContents: testIds => testIds.map(getTextContent),
     fireEvent,
-    blurElement,
     withinBaseElement,
     wait,
     within: wrappedWithin,
-    typeIntoElement,
-    clickElement,
     waitForDomChange,
-    waitForMS,
+    ...globalFunctions,
   }
   const withinElementFunctions = getWithinElementCustomFunctions(newFunctions)
   return {
@@ -143,17 +176,22 @@ export const getAllFunctions = (
 
 export default ({
   render = defaultRender,
+  customQueries,
   customFunctions: {
     global: getGlobalCustomFunctions,
     withinElement: getWithinElementCustomFunctions,
   },
 }) => (...args) => {
   const baseFunctions = render(...args)
-  const globalFunctions = getGlobalCustomFunctions(baseFunctions)
+  const globalFunctions = getGlobalCustomFunctions({
+    ...baseFunctions,
+    ...defaultGlobalFunctions,
+  })
 
   return getAllFunctions(
     baseFunctions,
-    globalFunctions,
+    {...defaultGlobalFunctions, ...globalFunctions},
     getWithinElementCustomFunctions,
+    customQueries,
   )
 }
