@@ -141,6 +141,22 @@ const wiring = {
   },
 }
 
+const wiringWithoutSerialize = {
+  children: {
+    counterContainer: {
+      findValue: 'counter-container',
+      serialize: (val, {showButtonString}) =>
+        `showButtonString is ${showButtonString}`,
+      children: {
+        showButton: {
+          findValue: 'Show',
+          findType: 'text',
+        },
+      },
+    },
+  },
+}
+
 describe('buildWiring helper', () => {
   test('should correctly handler serializers', async () => {
     const getRender = buildWiring(wiring)
@@ -213,5 +229,14 @@ describe('buildWiring helper', () => {
     expect(() => serialize({foo: 'bar'})).toThrow(
       "Object can't be serialzied,  make sure it's defined in wiring",
     )
+  })
+  describe('if wiring is provided without a serializer', () => {
+    test('the provided string should be undefined', async () => {
+      const getRender = buildWiring(wiringWithoutSerialize)
+      const render = getRender(['counterContainer'])
+      const {findCounterContainer} = render(fixture)
+      const {counterContainer} = await findCounterContainer()
+      expect(counterContainer).toMatchSnapshot('on initial render')
+    })
   })
 })

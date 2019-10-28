@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`buildWiring helper if wiring is provided without a serializer the provided string should be undefined: on initial render 1`] = `showButtonString is undefined`;
+
 exports[`buildWiring helper should be possible to call manually call serialize: initial render passed into console.log 1`] = `
 "Some counters
 -first:  0
