@@ -59,6 +59,20 @@ export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
   }
 }
 
+export const defaultGlobalFunctions = {
+  clickElement: element => fireEvent.click(element),
+  typeIntoElement: (text, element) => {
+    fireEvent.change(element, {target: {value: text}})
+  },
+  focusElement: element => {
+    fireEvent.focus(element)
+  },
+  blurElement: element => {
+    fireEvent.blur(element)
+  },
+  waitForDomChange,
+}
+
 export const getAllFunctions = (
   baseFunctions,
   globalFunctions,
@@ -72,21 +86,8 @@ export const getAllFunctions = (
     customQueries,
     container,
   )
+  const {clickElement} = globalFunctions
   const {debug, getByTestId} = funcs
-
-  const clickElement = element => fireEvent.click(element)
-
-  const typeIntoElement = (text, element) => {
-    fireEvent.change(element, {target: {value: text}})
-  }
-
-  const focusElement = element => {
-    fireEvent.focus(element)
-  }
-
-  const blurElement = element => {
-    fireEvent.blur(element)
-  }
 
   const baseTypes = [
     'Text',
@@ -157,18 +158,14 @@ export const getAllFunctions = (
     ...funcs,
     testId,
     ...builtFunctions,
-    ...globalFunctions,
     getTextContent,
     getTextContents: testIds => testIds.map(getTextContent),
     fireEvent,
-    focusElement,
-    blurElement,
     withinBaseElement,
     wait,
     within: wrappedWithin,
-    typeIntoElement,
-    clickElement,
     waitForDomChange,
+    ...globalFunctions,
   }
   const withinElementFunctions = getWithinElementCustomFunctions(newFunctions)
   return {
@@ -186,11 +183,14 @@ export default ({
   },
 }) => (...args) => {
   const baseFunctions = render(...args)
-  const globalFunctions = getGlobalCustomFunctions(baseFunctions)
+  const globalFunctions = getGlobalCustomFunctions({
+    ...baseFunctions,
+    ...defaultGlobalFunctions,
+  })
 
   return getAllFunctions(
     baseFunctions,
-    globalFunctions,
+    {...defaultGlobalFunctions, ...globalFunctions},
     getWithinElementCustomFunctions,
     customQueries,
   )

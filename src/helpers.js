@@ -1,5 +1,5 @@
 import {within} from 'react-testing-library'
-import {getAllFunctions} from './getRenderHandler'
+import {getAllFunctions, defaultGlobalFunctions} from './getRenderHandler'
 
 export const combine = (...strings) => {
   return strings.filter(string => string !== undefined).join('\n')
@@ -11,13 +11,16 @@ export const addAllCustomFunctions = (val, customFunctions, customQueries) => {
     global: getGlobalFunctions = () => ({}),
     withinElement: getWithinElementFunctions = functions => functions,
   } = customFunctions
-  const globalFunctions = getGlobalFunctions(returnedFromWithin)
+  const globalFunctions = getGlobalFunctions({
+    ...returnedFromWithin,
+    ...defaultGlobalFunctions,
+  })
   return getAllFunctions(
     {
       ...returnedFromWithin,
       container: val,
     },
-    globalFunctions,
+    {...defaultGlobalFunctions, ...globalFunctions},
     getWithinElementFunctions,
     customQueries,
   )
