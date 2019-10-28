@@ -21,13 +21,19 @@ const getQueryFunction = ({
 }
 
 const getWiringWithTypesApplied = (parent, wiring, functions) => {
-  const {getCurrentType, types, extend, children, serialize = () => {}} = wiring
+  const {
+    getCurrentType,
+    types,
+    extend = () => ({}),
+    children,
+    serialize = () => {},
+  } = wiring
   if (!getCurrentType || !types) {
-    return {...wiring, serialize}
+    return {...wiring, extend, serialize}
   }
   const type = getCurrentType(parent, functions)
   if (!type) {
-    return {...wiring, serialize}
+    return {...wiring, extend, serialize}
   }
   const {
     types: typesForType,
@@ -242,7 +248,7 @@ const addExtraFunctions = (
 
       const returnedFromWithin = within(element)
       const defaultFunctions = getDefaultFunctions(returnedFromWithin, element)
-      const {children, extend = () => ({})} = getWiringWithTypesApplied(
+      const {children, extend} = getWiringWithTypesApplied(
         element,
         wiring,
         returnedFromWithin,
