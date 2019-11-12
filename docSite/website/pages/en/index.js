@@ -5,21 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const React = require('react');
+const React = require('react')
 
-const CompLibrary = require('../../core/CompLibrary.js');
+const CompLibrary = require('../../core/CompLibrary.js')
 
-const MarkdownBlock = CompLibrary.MarkdownBlock; /* Used to read markdown */
-const Container = CompLibrary.Container;
-const GridBlock = CompLibrary.GridBlock;
+const MarkdownBlock = CompLibrary.MarkdownBlock /* Used to read markdown */
+const Container = CompLibrary.Container
+const GridBlock = CompLibrary.GridBlock
 
 class HomeSplash extends React.Component {
   render() {
-    const {siteConfig, language = ''} = this.props;
-    const {baseUrl, docsUrl} = siteConfig;
-    const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`;
-    const langPart = `${language ? `${language}/` : ''}`;
-    const docUrl = doc => `${baseUrl}${docsPart}${langPart}${doc}`;
+    const {siteConfig, language = ''} = this.props
+    const {baseUrl, docsUrl} = siteConfig
+    console.log(baseUrl, docsUrl)
+    const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`
+    const langPart = `${language ? `${language}/` : ''}`
+    const docUrl = doc => `${baseUrl}${docsPart}${doc}`
 
     const SplashContainer = props => (
       <div className="homeContainer">
@@ -27,20 +28,22 @@ class HomeSplash extends React.Component {
           <div className="wrapper homeWrapper">{props.children}</div>
         </div>
       </div>
-    );
+    )
 
     const Logo = props => (
       <div className="projectLogo">
         <img src={props.img_src} alt="Project Logo" />
       </div>
-    );
+    )
 
     const ProjectTitle = () => (
-      <h2 className="projectTitle">
-        {siteConfig.title}
-        <small>{siteConfig.tagline}</small>
-      </h2>
-    );
+      <div>
+        <h2 className="projectTitle">{siteConfig.title}</h2>
+        <div className="projectTaglineWrapper">
+          <p className="projectTagline">{siteConfig.tagline}</p>
+        </div>
+      </div>
+    )
 
     const PromoSection = props => (
       <div className="section promoSection">
@@ -48,7 +51,7 @@ class HomeSplash extends React.Component {
           <div className="pluginRowBlock">{props.children}</div>
         </div>
       </div>
-    );
+    )
 
     const Button = props => (
       <div className="pluginWrapper buttonWrapper">
@@ -56,157 +59,113 @@ class HomeSplash extends React.Component {
           {props.children}
         </a>
       </div>
-    );
+    )
 
     return (
       <SplashContainer>
-        <Logo img_src={`${baseUrl}img/undraw_monitor.svg`} />
+        <Logo img_src={`${baseUrl}img/wire-big.png`} />
         <div className="inner">
           <ProjectTitle siteConfig={siteConfig} />
           <PromoSection>
-            <Button href="#try">Try It Out</Button>
-            <Button href={docUrl('doc1.html')}>Example Link</Button>
-            <Button href={docUrl('doc2.html')}>Example Link 2</Button>
+            <Button href={docUrl('getting-started')}>Get Started</Button>
           </PromoSection>
         </div>
       </SplashContainer>
-    );
+    )
   }
 }
 
 class Index extends React.Component {
   render() {
-    const {config: siteConfig, language = ''} = this.props;
-    const {baseUrl} = siteConfig;
+    const {config: siteConfig, language = ''} = this.props
+    const {baseUrl} = siteConfig
 
     const Block = props => (
       <Container
         padding={['bottom', 'top']}
         id={props.id}
-        background={props.background}>
+        background={props.background}
+      >
         <GridBlock
-          align="center"
+          align={props.align || 'center'}
+          imageAlign={props.imageAlign || 'center'}
           contents={props.children}
           layout={props.layout}
         />
       </Container>
-    );
+    )
 
-    const FeatureCallout = () => (
-      <div
-        className="productShowcaseSection paddingBottom"
-        style={{textAlign: 'center'}}>
-        <h2>Feature Callout</h2>
-        <MarkdownBlock>These are features of this project</MarkdownBlock>
-      </div>
-    );
+    const Problem = () => (
+      <React.Fragment>
+        <Block background={'light'} align="left">
+          {[
+            {
+              title: '',
+              content:
+                '## The Problem \n - You love the new api provided by `react-testing-library`, but have hit some walls in trying to write tests for your actual components.  Testing individual behaviors is easy and makes a ton of sense, but when it comes to confirming that every you expect has rendered in to the dom, you seem stuck between asserting countless values, or snapshotting the entire dom(the problems of which are well document here) \n - The `react-testing-library` model of calling render to get helpers that are specifically targeted at the component you want to test works great for a single test, but when you try reuse that behavior between multiple tests, it becomes really cumbersome and hard to manage.',
+              image: `${baseUrl}img/problem.png`,
+              imageAlt: 'The problem (picture of a maze)',
+              imageAlign: 'left',
+            },
+          ]}
+        </Block>
+      </React.Fragment>
+    )
 
-    const TryOut = () => (
-      <Block id="try">
+    const Solution = () => [
+      <Block background={null} align="left">
         {[
           {
-            content:
-              'To make your landing page more attractive, use illustrations! Check out ' +
-              '[**unDraw**](https://undraw.co/) which provides you with customizable illustrations which are free to use. ' +
-              'The illustrations you see on this page are from unDraw.',
-            image: `${baseUrl}img/undraw_code_review.svg`,
-            imageAlign: 'left',
-            title: 'Wonderful SVG Illustrations',
-          },
-        ]}
-      </Block>
-    );
-
-    const Description = () => (
-      <Block background="dark">
-        {[
-          {
-            content:
-              'This is another description of how this project is useful',
-            image: `${baseUrl}img/undraw_note_list.svg`,
+            title: '',
+            image: `${baseUrl}img/idea.png`,
             imageAlign: 'right',
-            title: 'Description',
-          },
-        ]}
-      </Block>
-    );
-
-    const LearnHow = () => (
-      <Block background="light">
-        {[
-          {
+            imageAlt: 'The solution (picture of a light bulb)',
             content:
-              'Each new Docusaurus project has **randomly-generated** theme colors.',
-            image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
-            imageAlign: 'right',
-            title: 'Randomly Generated Theme Colors',
+              '## The Solution \n `react-wiring-library` is a declarative framework for describing the relevant structure of the components you want to test.  Once you have your components described using simple tree structure, you can create readable, relevant snapshots that capture every value you care about in a single assert.  It also lets you create a simple api of reusable interactions functions that scale with your tests. ',
           },
         ]}
-      </Block>
-    );
+      </Block>,
+    ]
 
     const Features = () => (
-      <Block layout="fourColumn">
+      <Block layout="twoColumn">
         {[
           {
-            content: 'This is the content of my feature',
-            image: `${baseUrl}img/undraw_react.svg`,
+            content:
+              'Get all of ease of use of snapshots while eliminating the downsides',
+            image: `${baseUrl}img/picture.png`,
             imageAlign: 'top',
-            title: 'Feature One',
+            title: 'Readable, Relevant Snapshots',
           },
           {
-            content: 'The content of my second feature',
-            image: `${baseUrl}img/undraw_operating_system.svg`,
+            content:
+              'Easily share test interactions between tests or the suite as a whole',
+            image: `${baseUrl}img/recycle.png`,
             imageAlign: 'top',
-            title: 'Feature Two',
+            title: 'Easy reuse',
+          },
+          {
+            content:
+              'Let `react-wiring-library` handle all of the details of traversing the dom, while you focus on what you actually want to test',
+            image: `${baseUrl}img/connect.png`,
+            imageAlign: 'top',
+            title: 'Structure, not details',
           },
         ]}
       </Block>
-    );
-
-    const Showcase = () => {
-      if ((siteConfig.users || []).length === 0) {
-        return null;
-      }
-
-      const showcase = siteConfig.users
-        .filter(user => user.pinned)
-        .map(user => (
-          <a href={user.infoLink} key={user.infoLink}>
-            <img src={user.image} alt={user.caption} title={user.caption} />
-          </a>
-        ));
-
-      const pageUrl = page => baseUrl + (language ? `${language}/` : '') + page;
-
-      return (
-        <div className="productShowcaseSection paddingBottom">
-          <h2>Who is Using This?</h2>
-          <p>This project is used by all these people</p>
-          <div className="logos">{showcase}</div>
-          <div className="more-users">
-            <a className="button" href={pageUrl('users.html')}>
-              More {siteConfig.title} Users
-            </a>
-          </div>
-        </div>
-      );
-    };
+    )
 
     return (
       <div>
         <HomeSplash siteConfig={siteConfig} language={language} />
         <div className="mainContainer">
           <Features />
-          <FeatureCallout />
-          <LearnHow />
-          <TryOut />
-          <Description />
-          <Showcase />
+          <Problem />
+          <Solution />
         </div>
       </div>
-    );
+    )
   }
 }
 
-module.exports = Index;
+module.exports = Index
