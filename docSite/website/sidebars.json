@@ -1,0 +1,22 @@
+{
+  "docs": {
+    "Introduction": ["getting-started"],
+    "Basic Tutorials": [
+      "basics/prepping",
+      "basics/structure",
+      "basics/snapshots",
+      "basics/testing-interactions",
+      "basics/dry-tests"
+    ],
+    "API Reference": [
+      "api/get-render",
+      "api/wiring-tree",
+      "api/wiring-node",
+      "api/abstract-wiring-node",
+      "api/find-child"
+    ]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}

@@ -1,37 +1,20 @@
-<div align="center">
-<h1>React Wiring Library</h1>
+---
+id: getting-started
+title: Getting Started
+sidebar_label: Getting Started
+hide_title: true
+---
 
-<a href="https://i.imgur.com/AFuVnpE.png">
-  <img
-    height="80"
-    width="80"
-    alt="goat"
-    src="https://i.imgur.com/AFuVnpE.png"
-  />
-</a>
+# Getting Started
 
-<p>A declarative framework for building structured react-testing-library tests with readable snapshots and simple reusability.</p>
+## Installation
+```bash
+yarn add --dev react-wiring-library 
+```
 
-<br />
-
-[**Read The Docs**](https://react-wiring-library.now.sh)
-
-<br />
-</div>
-
-<hr />
-
-[![Build Status][build-badge]][build]
-[![Code Coverage][coverage-badge]][coverage]
-[![version][version-badge]][package] 
-[![downloads][downloads-badge]][npmtrends]
-[![MIT License][license-badge]][license]
-
-[![PRs Welcome][prs-badge]][prs]
-
-[![Watch on GitHub][github-watch-badge]][github-watch]
-[![Star on GitHub][github-star-badge]][github-star]
-
+```bash
+npm install --save-dev react-wiring-library
+```
 
 ## The Problem
 
@@ -43,17 +26,8 @@ Also, the `react-testing-library` model of calling render to get helpers that ar
 
 `react-wiring-library` is a declarative framework for describing the relevant structure of the components you want to test.  Once you have your components described using simple tree structure, you can create readable, relevant snapshots that capture every value you care about in a single assert.  It also lets you create a simple api of reusable interactions functions that scale with your tests. 
 
-## Installation
-```bash
-yarn add --dev react-wiring-library 
-```
-
-```bash
-npm install --save-dev react-wiring-library
-```
-
 ## Example
-```jsx
+```javascript
 import {getRender} from 'react-wiring-library'
 import React from 'react'
 import React, {useState} from 'react'
@@ -164,26 +138,8 @@ describe('TodoList', () => {
 })
 ```
 
-## LICENSE
 
-[MIT](LICENSE)
 
-<!-- prettier-ignore-start -->
 
-[build-badge]: https://img.shields.io/travis/cbranch101/react-wiring-library.svg?style=flat-square
-[build]: https://travis-ci.org/cbranch101/react-wiring-library
-[coverage-badge]: https://img.shields.io/codecov/c/github/cbranch101/react-wiring-library.svg?style=flat-square
-[coverage]: https://codecov.io/github/cbranch101/react-wiring-library
-[version-badge]: https://img.shields.io/npm/v/react-wiring-library.svg?style=flat-square
-[package]: https://www.npmjs.com/package/react-wiring-library
-[downloads-badge]: https://img.shields.io/npm/dm/react-wiring-library.svg?style=flat-square
-[npmtrends]: https://www.npmtrends.com/react-wiring-library/
-[license-badge]: https://img.shields.io/npm/l/react-wiring-library.svg?style=flat-square
-[license]: https://github.com/testing-library/react-wiring-library/blob/master/LICENSE
-[github-watch-badge]: https://img.shields.io/github/watchers/cbranch101/react-wiring-library.svg?style=social
-[github-watch]: https://github.com/cbranch101/react-wiring-library/watchers
-[prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
-[prs]: http://makeapullrequest.com
-[github-star-badge]: https://img.shields.io/github/stars/cbranch101/react-wiring-library.svg?style=social
-[github-star]: https://github.com/testing-library/react-wiring-library/stargazers
-<!-- prettier-ignore-end -->
+
+
