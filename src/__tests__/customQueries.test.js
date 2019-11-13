@@ -77,13 +77,18 @@ const wiring = {
           const {click} = await findShowButton()
           click()
         }
+        const showIcons = async () => {
+          await clickShowButton()
+          await findByIconName('forward')
+        }
         return {
-          showIcons: async () => {
-            await clickShowButton()
-            await findByIconName('forward')
+          showIcons,
+          findMultipleError: () => findByIconName(/ward$/),
+          findBadIconName: async () => {
+            await findByIconName('im-not-valid')
           },
           showIconsAndGoForward: async () => {
-            clickShowButton()
+            await clickShowButton()
             await findByIconNameAndClick('forward')
           },
           hideIcons: async () => {
@@ -137,4 +142,20 @@ describe('Custom Queries', () => {
       'after showing icons and going forward',
     )
   })
+  test('correctly throws errors for custom queries', async () => {
+    const render = getRender(wiring, config)
+    const {findIconControls} = render(fixture)
+    const {
+      findBadIconName,
+      findMultipleError,
+      showIcons,
+    } = await findIconControls()
+    await showIcons()
+    await expect(findBadIconName()).rejects.toThrow(
+      'Unable to find an element with IconName of im-not-valid',
+    )
+    await expect(findMultipleError()).rejects.toThrow(
+      'Found multiple elements with IconName of /ward$/',
+    )
+  }, 10000)
 })

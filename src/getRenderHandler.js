@@ -11,13 +11,16 @@ const {
   waitForDomChange,
 } = baseRootFunctions
 
-const {getElementError, getMultipleElementsFoundError} = queryHelpers
-
 const getQueriesFromFunction = (func, type) => {
+  const getMultipleError = (c, findValue) =>
+    `Found multiple elements with ${type} of ${findValue}`
+  const getMissingError = (c, findValue) =>
+    `Unable to find an element with ${type} of ${findValue}`
+
   const [queryBy, getAllBy, getBy, findAllBy, findBy] = buildQueries(
     func,
-    getMultipleElementsFoundError,
-    getElementError,
+    getMultipleError,
+    getMissingError,
   )
 
   const namedQueries = {
