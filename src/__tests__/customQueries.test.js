@@ -1,5 +1,5 @@
 import React, {Fragment, useState} from 'react'
-import {queryHelpers} from 'react-testing-library'
+import {queryHelpers} from '@testing-library/react'
 import buildWiring from '../index'
 const {queryAllByAttribute} = queryHelpers
 const Icon = ({name, onClick}) => <span onClick={onClick} xlinkHref={name} />

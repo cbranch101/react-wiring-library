@@ -1,4 +1,4 @@
-import {within} from 'react-testing-library'
+import {within} from '@testing-library/react'
 import {getAllFunctions, defaultGlobalFunctions} from './getRenderHandler'
 
 export const combine = (...strings) => {

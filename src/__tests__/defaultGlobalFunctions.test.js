@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {cleanup} from 'react-testing-library'
+import {cleanup} from '@testing-library/react'
 import buildWiring from '../index'
 
 afterEach(cleanup)
