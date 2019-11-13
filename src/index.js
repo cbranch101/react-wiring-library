@@ -288,7 +288,7 @@ const matchesTestId = (object, testId) => {
   )
 }
 
-export default (wiring, config = {}) => wiringKeys => {
+export const getRender = (wiring, config = {}) => {
   const {customFunctions = {}, customQueries = {}} = config
   const {global = () => ({}), withinElement = funcs => funcs} = customFunctions
   const {children, extend} = wiring
@@ -310,7 +310,7 @@ export default (wiring, config = {}) => wiringKeys => {
       ),
     )
   }
-  wiringKeys.forEach(key => {
+  Object.keys(wiring.children).forEach(key => {
     expect.addSnapshotSerializer({
       test: val => matchesTestId(val, wiring.children[key].findValue),
       print: val => {

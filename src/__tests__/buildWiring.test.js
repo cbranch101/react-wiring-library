@@ -1,7 +1,7 @@
 import {cleanup} from '@testing-library/react'
 import React from 'react'
 import {combine} from '../helpers'
-import buildWiring from '../index'
+import {getRender} from '../index'
 import CounterList from '../CounterList'
 
 afterEach(() => {
@@ -159,8 +159,7 @@ const wiringWithoutSerialize = {
 
 describe('buildWiring helper', () => {
   test('should correctly handler serializers', async () => {
-    const getRender = buildWiring(wiring)
-    const render = getRender(['counterContainer'])
+    const render = getRender(wiring)
     const {findCounterList} = render(fixture)
     const {counterContainer, findCounter} = await findCounterList()
     const assertFirstRow = async () => {
@@ -218,8 +217,7 @@ describe('buildWiring helper', () => {
   })
   test('should be possible to call manually call serialize', async () => {
     jest.spyOn(console, 'log')
-    const getRender = buildWiring(wiring)
-    const render = getRender(['counterContainer'])
+    const render = getRender(wiring)
     const {findCounterList, serialize} = render(fixture)
     const {counterContainer} = await findCounterList()
     serialize(counterContainer)
@@ -232,8 +230,7 @@ describe('buildWiring helper', () => {
   })
   describe('if wiring is provided without a serializer', () => {
     test('the provided string should be undefined', async () => {
-      const getRender = buildWiring(wiringWithoutSerialize)
-      const render = getRender(['counterContainer'])
+      const render = getRender(wiringWithoutSerialize)
       const {findCounterContainer} = render(fixture)
       const {counterContainer} = await findCounterContainer()
       expect(counterContainer).toMatchSnapshot('on initial render')

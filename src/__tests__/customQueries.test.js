@@ -1,6 +1,6 @@
 import React, {Fragment, useState} from 'react'
 import {queryHelpers} from '@testing-library/react'
-import buildWiring from '../index'
+import {getRender} from '../index'
 const {queryAllByAttribute} = queryHelpers
 const Icon = ({name, onClick}) => <span onClick={onClick} xlinkHref={name} />
 
@@ -119,8 +119,7 @@ const wiring = {
 
 describe('Custom Queries', () => {
   test('custom queries should work with all built in functions', async () => {
-    const getRender = buildWiring(wiring, config)
-    const render = getRender(['iconControls'])
+    const render = getRender(wiring, config)
     const {findIconControls} = render(fixture)
     const {
       showIcons,
