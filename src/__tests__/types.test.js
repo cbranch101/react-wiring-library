@@ -1,5 +1,5 @@
 import React from 'react'
-import buildWiring from '../index'
+import {getRender} from '../index'
 
 afterEach(() => {
   const body = document.body
@@ -144,8 +144,7 @@ const multiLevelFixture = (
 describe('Typed Wiring', () => {
   describe('if providing a type without extend', () => {
     test('should just not extend anything', async () => {
-      const getRender = buildWiring(wiring)
-      const render = getRender(['list'])
+      const render = getRender(wiring)
       const {findList} = render(typeWithoutExtendFixture)
       const {list} = await findList()
       expect(list).toMatchSnapshot('on initial render')
@@ -153,8 +152,7 @@ describe('Typed Wiring', () => {
   })
   describe('if providing a type without children', () => {
     test('should not add any custom children', async () => {
-      const getRender = buildWiring(wiring)
-      const render = getRender(['list'])
+      const render = getRender(wiring)
       const {findList} = render(typeWithoutChildrenFixture)
       const {list} = await findList()
       expect(list).toMatchSnapshot('on initial render')
@@ -162,8 +160,7 @@ describe('Typed Wiring', () => {
   })
   describe('if a typed wiring does not provide serialize', () => {
     test('undefined should be passed into the child type serializers', async () => {
-      const getRender = buildWiring(typedWiringWithoutSerialize)
-      const render = getRender(['list'])
+      const render = getRender(typedWiringWithoutSerialize)
       const {findList} = render(typeWithoutExtendFixture)
       const {list} = await findList()
       expect(list).toMatchSnapshot('on initial render')
@@ -171,8 +168,7 @@ describe('Typed Wiring', () => {
   })
   describe('if providing a type that has further types beneath in', () => {
     test('extend, serialize, and children should chain through', async () => {
-      const getRender = buildWiring(multiLevelTypeWiring)
-      const render = getRender(['list'])
+      const render = getRender(multiLevelTypeWiring)
       const {findList} = render(multiLevelFixture)
       const {list} = await findList()
       expect(list).toMatchSnapshot('on initial render')

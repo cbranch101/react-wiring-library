@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {cleanup} from '@testing-library/react'
-import buildWiring from '../index'
+import {getRender} from '../index'
 
 afterEach(cleanup)
 
@@ -33,8 +33,7 @@ const blurWiring = {
 
 describe('Default functions returned with all wiring', () => {
   test('focus, blur and typeInto, should behave as expected', async () => {
-    const getRender = buildWiring(blurWiring)
-    const render = getRender(['input'])
+    const render = getRender(blurWiring)
     const {findInput} = render(blurFixture)
     const {input, blur, focus, typeInto} = await findInput()
     expect(input).toMatchSnapshot('initial render')
