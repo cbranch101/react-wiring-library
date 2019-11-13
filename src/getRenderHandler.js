@@ -1,4 +1,4 @@
-import * as baseRootFunctions from 'react-testing-library'
+import * as baseRootFunctions from '@testing-library/react'
 
 const {
   waitForElement,
