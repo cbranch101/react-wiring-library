@@ -17,7 +17,6 @@ class HomeSplash extends React.Component {
   render() {
     const {siteConfig, language = ''} = this.props
     const {baseUrl, docsUrl} = siteConfig
-    console.log(baseUrl, docsUrl)
     const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`
     const langPart = `${language ? `${language}/` : ''}`
     const docUrl = doc => `${baseUrl}${docsPart}${doc}`
@@ -95,61 +94,61 @@ class Index extends React.Component {
       </Container>
     )
 
-    const Problem = () => (
+    const Wiring = () => (
       <React.Fragment>
         <Block background={'light'} align="left">
           {[
             {
               title: '',
               content:
-                '## The Problem \n - You love the new api provided by `react-testing-library`, but have hit some walls in trying to write tests for your actual components.  Testing individual behaviors is easy and makes a ton of sense, but when it comes to confirming that every you expect has rendered in to the dom, you seem stuck between asserting countless values, or snapshotting the entire dom(the problems of which are well document here) \n - The `react-testing-library` model of calling render to get helpers that are specifically targeted at the component you want to test works great for a single test, but when you try reuse that behavior between multiple tests, it becomes really cumbersome and hard to manage.',
-              image: `${baseUrl}img/problem.png`,
+                '## The Wiring Tree \n Do your vanilla `react-wiring-library` tests include a large body of custom helper for querying for and interacting a complicated component?  Do those helpers mostly repeated code related to calling queries or calling within to drill down the right level, and then calling events at that level? Let’s the `react-wiring-library`’s wiring tree handle all of that for you.  By represented the queries you care about in a single declarative tree, you can focus on the behaviours you care about, while the tree handles all of the dom traversal for you.',
+              image: `${baseUrl}img/wiring.gif`,
               imageAlt: 'The problem (picture of a maze)',
-              imageAlign: 'left',
+              imageAlign: 'right',
             },
           ]}
         </Block>
       </React.Fragment>
     )
 
-    const Solution = () => [
+    const Snapshots = () => [
       <Block background={null} align="left">
         {[
           {
             title: '',
-            image: `${baseUrl}img/idea.png`,
-            imageAlign: 'right',
+            image: `${baseUrl}img/snapshots.gif`,
+            imageAlign: 'left',
             imageAlt: 'The solution (picture of a light bulb)',
             content:
-              '## The Solution \n `react-wiring-library` is a declarative framework for describing the relevant structure of the components you want to test.  Once you have your components described using simple tree structure, you can create readable, relevant snapshots that capture every value you care about in a single assert.  It also lets you create a simple api of reusable interactions functions that scale with your tests. ',
+              '## Custom Serialized Snapshots \n No more thousand line snapshots that output unreadable diffs, and cause misleading, unnecessary test failures. Instead, use our simple api for converting rendered react elements into easy to read, relevant snapshots.  ',
           },
         ]}
       </Block>,
     ]
 
     const Features = () => (
-      <Block layout="twoColumn">
+      <Block layout="threeColumn">
         {[
           {
             content:
-              'Get all of ease of use of snapshots while eliminating the downsides',
-            image: `${baseUrl}img/picture.png`,
+              'Assert an entire component with a single call, while being sure that tests only fail when functionaity is broken, and knowing exactly why a test failed.',
+            image: `${baseUrl}img/snapshot.png`,
             imageAlign: 'top',
-            title: 'Readable, Relevant Snapshots',
+            title: 'Snapshots that work',
           },
           {
             content:
-              'Easily share test interactions between tests or the suite as a whole',
-            image: `${baseUrl}img/recycle.png`,
+              "Test complicated multi-level components without creating mountains of query/interaction code that's hard to understand and annoying to maintain",
+            image: `${baseUrl}img/query.png`,
             imageAlign: 'top',
-            title: 'Easy reuse',
+            title: 'Super-charged querying',
           },
           {
             content:
-              'Let `react-wiring-library` handle all of the details of traversing the dom, while you focus on what you actually want to test',
-            image: `${baseUrl}img/connect.png`,
+              'Customize the core api of react-testing-library to the specific needs of your project without compromising the guiding principles that make it work so well',
+            image: `${baseUrl}img/customize.png`,
             imageAlign: 'top',
-            title: 'Structure, not details',
+            title: 'Principled Customization',
           },
         ]}
       </Block>
@@ -160,8 +159,8 @@ class Index extends React.Component {
         <HomeSplash siteConfig={siteConfig} language={language} />
         <div className="mainContainer">
           <Features />
-          <Problem />
-          <Solution />
+          <Wiring />
+          <Snapshots />
         </div>
       </div>
     )
