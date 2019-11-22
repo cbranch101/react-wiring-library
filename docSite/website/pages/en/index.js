@@ -101,7 +101,7 @@ class Index extends React.Component {
             {
               title: '',
               content:
-                '## The Wiring Tree \n Do your vanilla `react-wiring-library` tests include a large body of custom helper for querying for and interacting a complicated component?  Do those helpers mostly repeated code related to calling queries or calling within to drill down the right level, and then calling events at that level? Let’s the `react-wiring-library`’s wiring tree handle all of that for you.  By represented the queries you care about in a single declarative tree, you can focus on the behaviours you care about, while the tree handles all of the dom traversal for you.',
+                '## Readable, intuitive tests \n While `react-testing-library` does a great job of letting you test code the way you use it, getting there requires a lot of so called "wiring" code.  \n Querying to traverse the DOM, interacting with components and then asserting expected values is easy to do, but it ends up requiring a lot of repeated code that muddies up your tests.  `react-wiring-library` lets you offload all of that wiring to the framework, leaving only a series of simple, expressive async function calls that represent each step you want to test.',
               image: `${baseUrl}img/wiring.gif`,
               imageAlt: 'The problem (picture of a maze)',
               imageAlign: 'right',
@@ -120,7 +120,7 @@ class Index extends React.Component {
             imageAlign: 'left',
             imageAlt: 'The solution (picture of a light bulb)',
             content:
-              '## Custom Serialized Snapshots \n No more thousand line snapshots that output unreadable diffs, and cause misleading, unnecessary test failures. Instead, use our simple api for converting rendered react elements into easy to read, relevant snapshots.  ',
+              '## Custom Serializers \n No more endless snapshots that output unreadable diffs, and cause misleading, unnecessary test failures. Instead, use our simple api for converting rendered react elements into easy to read, relevant snapshots.',
           },
         ]}
       </Block>,
