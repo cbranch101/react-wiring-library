@@ -5,9 +5,9 @@
       "basics/prepping",
       "basics/structure",
       "basics/snapshots",
-      "basics/testing-interactions",
-      "basics/dry-tests"
+      "basics/testing-interactions"
     ],
+    "Advanced Tutorials": ["advanced/dry-tests"],
     "API Reference": [
       "api/get-render",
       "api/wiring-tree",
@@ -15,8 +15,5 @@
       "api/abstract-wiring-node",
       "api/find-child"
     ]
-  },
-  "docs-other": {
-    "First Category": ["doc4", "doc5"]
   }
 }

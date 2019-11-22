@@ -1,11 +1,11 @@
 ---
 id: dry-tests
 title: Making Tests DRY
-sidebar_label: Making Tests DRY
+sidebar_label: Using Extend To Make Tests DRY
 hide_title: true
 ---
 
-# Making Tests DRY
+# Using Extend To Make Tests DRY
 With our first test up and running, it's time to start thinking about a way to wrap up our wiring function calls in a way that we're not having to repeat our querying and interactions in each individual test.  To better illustrate what we mean, let's have two tests, one that asserts what happens when we click on the first todo, and another for clicking on the second.  
 
 > You would usually structure a test like this with multiple assertions in a single test, but we're doing it this way to demonstrate where the repetition comes in. 
@@ -125,8 +125,6 @@ The second argument passed to extend is all of the functions that would normally
 >As a rule, every interaction that happens in a test should be specifically defined in an extend function and given a descriptive name.  This has two benefits
 >1. If the specific implementation of the component changes(you have to click another element, etc), your tests can stay the same. 
 >2. Your tests become a very easy to read sequence of queries, descriptive interaction functions, and assertions
-
-## Extending the root node with `toggleTodo`
 
 Before abstracting any further, let's think about specifically what we need to do in each test.  We actually only need to do one thing: toggle a node at a particular position.  We never interact with the list as a whole, and we never interact with a `Todo` other than to toggle it.  
 

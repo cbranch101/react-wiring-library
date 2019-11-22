@@ -7,6 +7,12 @@ hide_title: true
 
 # Setting up Basic Wiring Structure
 
+Once we know which parts of our component we want to target, and how we're going to target them, it's just a matter of a building out the data structure that `react-wiring-library` will use to traverse your elements.  
+
+While the different options for capturing all of the different variations of components can get pretty involved, the core idea is very simple.  You're going to be building a tree, where each node in the tree is a DOM element.  Each node will describe how to find that DOM element, add any required interactions specific to that element, and describe how the element should be serialized in the final snapshot. 
+
+## Scaffolding
+
 To get started, we need to add a single file called `testRender.js`(just a convention). This function will be a replacement for the standard render function imported from `react-testing-library`.  In general, This file will define all of the test interactions and serializers(wiring) for your entire app. 
 
 In this file, import `getRender` pass in your wiring object, and export the result of calling the function so it can be used in your tests

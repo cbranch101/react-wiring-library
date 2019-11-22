@@ -7,8 +7,7 @@ hide_title: true
 
 # Prepping Components
 
-Before setting up test wiring, there's some basic preparation we need to do first
-
+The core idea of `react-wiring-library` is to offload the majority of the annoying DOM traversal / interaction code to the framework, so we can focus on actually testing.  For that to be possible, you need to tell `react-wiring-library` which parts of the DOM tree it should care about.  Most of the time, you'll need to make a few basic changes to your components to make it easier for `react-wiring-library` to find the elements it needs.  Let's start with a basic component to get a feel for what that looks like. 
 
 ## The Component to Test
 ```javascript
@@ -37,7 +36,7 @@ const TodoList = ({todos}) => {
 
 ## Target Relevant Elements
 
-Before `react-wiring-library` can find and interact with and serialize your elements in tests, we need to be sure it's possible to target them in some way. There are several [different ways](https://testing-library.com/docs/dom-testing-library/api-queries#queries) to target elements based on their content, and if none of those work, we just add `data-testid` attributes where relevant.
+There are several [different ways](https://testing-library.com/docs/dom-testing-library/api-queries#queries) to target elements based on their content, and if none of those work, we just add `data-testid` attributes where relevant.
 
 In `TodoList` there are three elements we care about
 - TodoList as a whole
@@ -46,7 +45,9 @@ In `TodoList` there are three elements we care about
 
 In general, focus on elements that are going to change in some relevant way in your tests.  If there's nothing to verify, don't bother targeting or serializing them. 
 
-Because `TodoList` is the top level that were going to call `toMatchSnapshot` on in our tests, it always needs to have a test ID (so the serializer can find it), even if it was possible to target it some other way
+Because `TodoList` is the top level that were going to call `toMatchSnapshot` on in our tests, it always needs to have a test ID (so the serializer can find it), even if it was possible to target it some other way. 
+
+>Always add the data-testid attribute to the top level of any element you want to serialize
 
 ```javascript
 const TodoList = ({todos}) => {

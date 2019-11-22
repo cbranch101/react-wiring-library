@@ -7,6 +7,14 @@ hide_title: true
 
 # Testing Interactions
 
+Now that we've successfully described the structure of our components, and built out our serializers to so we can verify their structure, it's just a matter of actually testing.  Every line of our tests should be one of three things
+
+1. Calling custom async `find` functions to get access to a given element
+2. Calling returned helpers to interact with elements
+3. Calling `toMatchSnapshot` to assert the correct behavior. 
+
+
+## Review
 To review, let's look at where we were with our test
 
 ## TodoList.test.js
