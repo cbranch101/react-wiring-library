@@ -45,6 +45,9 @@ class Footer extends React.Component {
             <a href={this.docUrl('api/wiring-tree.html', this.props.language)}>
               API
             </a>
+          </div>
+          <div>
+            <h5>More</h5>
             <a href="https://github.com/cbranch101/react-wiring-library">
               GitHub
             </a>
