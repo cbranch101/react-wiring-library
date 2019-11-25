@@ -39,6 +39,13 @@ defaults to `false`
 
 Useful when trying to interact with elements that write directly to body tag(Portals, etc).  Instead of searching its its parent like all other wiring nodes, `shouldFindInBaseElement` will look in the `baseElement` returned from `render`
 
+### `children` (Object)
+
+An object where the key is the string that will be used to define the name of the return [element](get-render.md) object and the [`find{childNode}`](find-child.md) helper, and the value is a wiring node. 
+
+> When choosing the key to store children, if you stick to camel case with a lowercase first letter, `react-wiring-library` can correctly translate it into its different forms. I.E. `wiringKey`, not `WiringKey` or `wiring_key`. 
+
+
 ### `serialize` (Function)
 `(element, { ...elementHelpers }) => serializedString`
 
@@ -64,7 +71,7 @@ children: {
 ```
 
 ### `extend` (Function)
-`(element, { ...elementHelpers }) => ({ ...newElementHelpers })
+`(element, { ...elementHelpers }) => ({ ...newElementHelpers })`
 
 Takes a DOM element and the helpers for that element, and returns an object with new functions specifically for interacting with that element. It should be noted that all built in helpers can be overriden as well, including any [`find{childNode}`](find-child.md) helpers
 
