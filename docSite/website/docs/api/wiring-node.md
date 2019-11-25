@@ -11,9 +11,9 @@ These are all other nodes are standard wiring nodes, which are responsible for d
 
 ## Options
 
-### `findType`
+### `findType` (String)
 
-defaults to `testId`
+defaults to `'testId'`
 
 The type of [query](https://testing-library.com/docs/dom-testing-library/api-queries) from `dom-testing-library` to run
 
@@ -23,23 +23,30 @@ Options are
 - [`placeholderText`](https://testing-library.com/docs/dom-testing-library/api-queries#byplaceholdertext)
 - [`testId`](https://testing-library.com/docs/dom-testing-library/api-queries#bytestid)
 
-### `findValue`
+### `findValue` (String)
 
 The value to pass in the `findType` query.  If the `findType` is `text` then the `findValue` would be the desired text.
 
-### `isMultiple`
+### `isMultiple` (Boolean)
 
 defaults to `false`
 
 Add `isMultiple` to wiring nodes for elements that exist in the dom multiple times at once.  If `isMultiple` is provided, querying for the node will required passing either an index or a filter function, and instead of a single string being passed to the parent `serialize` functions, an array of strings will be passed. 
 
-### `shouldFindInBaseElement`
+### `shouldFindInBaseElement` (Boolean)
+
+defaults to `false`
 
 Useful when trying to interact with elements that write directly to body tag(Portals, etc).  Instead of searching its its parent like all other wiring nodes, `shouldFindInBaseElement` will look in the `baseElement` returned from `render`
 
-### `serialize`
+### `serialize` (Function)
+`(element, { ...elementHelpers }) => serializedString`
 
-`(element, helpersFunctions) => serializedString`
+Takes the dom element found by the `findType` and `findValue`, any required helper functions, and the serialized strings of any children, and uses them to create a single string.  This string will be used to represent the dom node in snapshots and when calling the `serialize` helper manually. 
+
+serialize runs from the bottom of the tree to the top, with strings of the serialized children being passed into their parent's `serialize` function in the format of a single `${wiringKey}String` string for standard wiring nodes, and a `${wiringKey}Strings` array for `isMultiple` wiring nodes.  
+
+If undefined, the element will not be serialized
 
 ```javascript
 serialize: (val, {singleChildString, multipleChildStrings, combine}) => {
@@ -56,17 +63,14 @@ children: {
 },
 ```
 
-If undefined, the element will not be serialized
+### `extend` (Function)
+`(element, { ...elementHelpers }) => ({ ...newElementHelpers })
 
-`serialize` takes the dom element found by the `findType` and `findValue`, any required helper functions, and the serialized strings of any children, and uses them to create a single string.  This string will be used to represent the dom node in snapshots and when calling the `serialize` helper manually. 
+Takes a DOM element and the helpers for that element, and returns an object with new functions specifically for interacting with that element. It should be noted that all built in helpers can be overriden as well, including any [`find{childNode}`](find-child.md) helpers
 
-serialize runs from the bottom of the tree to the top, with strings of the serialized children being passed into their parent's `serialize` function in the format of a single `${wiringKey}String` string for standard wiring nodes, and a `${wiringKey}Strings` array for `isMultiple` wiring nodes.  
+If undefined, the wiring node will not be extended
 
-### `extend`
-
-`(element, helperFunctions) => newFunctionObject`
-
-#### Example Wiring Node
+#### Wiring Node
 ```javascript
 const bar = {
   ...
@@ -93,7 +97,7 @@ const bar = {
 }
 ```
 
-#### Example Test
+#### Test
 ```javascript
 const {findFirstChild} = await findParent()
 const {logAndClick, click} = await findFirstChild()
@@ -102,9 +106,3 @@ logAndClick()
 // 'clicked' is logged
 ```
 
-
-If undefined, the wiring node will not be extended
-
-`extend` takes a dom element, and the helper functions specific to that dom element(and any global helper functions) and returns an object with new functions specific for interacting with that dom node. 
-
-If the returned functions correspond to existing helpers(the `find${wiringKey}` helper, etc) it can also be used to override existing functionality. 
