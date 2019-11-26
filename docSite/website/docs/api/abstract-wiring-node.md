@@ -39,7 +39,7 @@ types: {
   }
 ```
 
-## `getCurrentType` (Functionx)
+## `getCurrentType` (Function)
 
 `(element, { ...elementHelpers }) => currentTypeString`
 
@@ -91,101 +91,37 @@ the `children` object of the base node. This allows you add new children that
 only exist for that type, while being able to declare children in the base node
 that you know will exist for all types.
 
-Example Dom:
-
-```html
-<ul data-testid="list">
-  <li data-testid="item">
-    <span data-testid="name">Row One</span>
-    <button data-testid="button">Button Name</button>
-  </li>
-  <li data-testid="item">
-    <span data-testid="name">Row One</span>
-    <input data-testid="checkbox" type="checkbox" />
-  </li>
-</ul>
-```
-
-Example Wiring:
+## Example
 
 ```javascript
-const abstractWiring = {
-  children: {
-    list: {
-      findValue: 'list',
-      serialize: (val, {itemStrings, combine}) => combine(...itemStrings),
-      children: {
-        item: {
-          serialize: (val, {nameString}) => `-${nameString}`,
-          isMultiple: true,
-          findValue: 'item',
-          children: {
-            name: {
-              findValue: 'name',
-              serialize: val => val.textContent,
-            },
-          },
-          getCurrentType: (val, {queryByTestId}) => {
-            if (queryByTestId('button')) {
-              return 'buttonItem'
-            }
-            return 'checkboxItem'
-          },
-          types: {
-            buttonItem: {
-              extend: (val, {findButton}) => ({
-                clickButton: async () => {
-                  const {click} = await findButton()
-                  click()
-                },
-              }),
-              serialize: (val, {buttonString}, baseString) => {
-                return `${baseString} ${buttonString}`
-              },
-              children: {
-                button: {
-                  serialize: val => `[${val.textContent}]`,
-                },
-              },
-            },
-            checkItem: {
-              extend: (val, {findCheckbox}) => ({
-                toggleCheckbox: async () => {
-                  const {click} = await findCheckbox()
-                  click()
-                },
-              }),
-              serialize: (val, {checkbox}, baseString) => {
-                return `${baseString} ${buttonString}`
-              },
-              children: {
-                checkbox: {
-                  findValue: 'checkbox',
-                  serialize: val => (val.checked ? '☑️' : '◻️'),
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+import React from 'react'
+import {getRender} from 'react-wiring-library'
+
+const List = () => {
+  return (
+    <ul data-testid="list">
+      <li data-testid="item">
+        <span data-testid="name">Row One</span>
+        <button data-testid="button">Button Name</button>
+      </li>
+      <li data-testid="item">
+        <span data-testid="name">Row One</span>
+        <input data-testid="checkbox" type="checkbox" />
+      </li>
+    </ul>
+  )
 }
-```
 
-Example Test:
-
-```javascript
-{
+const wiring = {
   children: {
     list: {
       findValue: 'list',
       serialize: (val, {itemStrings, combine}) => combine(...itemStrings),
       children: {
         item: {
-          serialize: (val, {nameString}) => `-${nameString}`,
-          isMultiple: true,
           findValue: 'item',
+          serialize: (val, {nameString}) => `- ${nameString}`,
+          isMultiple: true,
           children: {
             name: {
               findValue: 'name',
@@ -211,11 +147,12 @@ Example Test:
               },
               children: {
                 button: {
+                  findValue: 'button',
                   serialize: val => `[${val.textContent}]`,
                 },
               },
             },
-            checkItem: {
+            checkboxItem: {
               extend: (val, {findCheckbox}) => ({
                 toggleCheckbox: async () => {
                   const {click} = await findCheckbox()
@@ -228,7 +165,7 @@ Example Test:
               children: {
                 checkbox: {
                   findValue: 'checkbox',
-                  serialize: val => (val.checked ? '☑️' : '◻️'),
+                  serialize: val => (val.checked ? '✅' : '⬜️'),
                 },
               },
             },
@@ -238,21 +175,20 @@ Example Test:
     },
   },
 }
-```
 
-Example Test:
-
-```javascript
-const {findList} = render(component)
-const {findItem, list} = await findList()
-// - Row One [Button Nane]
-// - Row Two ◻️
-expect(list).toMatchSnapshot('on initial render')
-const {clickButton} = await findItem({index: 0})
-await clickButton()
-const {toggleCheckbox} = await findItem({index: 1})
-await toggleCheckbox()
-// - Row One [Button Nane]
-// - Row Two ☑️
-expect(list).toMatchSnapshot('after toggling checkbox')
+test('should correctly handle abstract components', async () => {
+  const render = getRender(wiring)
+  const {findList} = render(<List />)
+  const {findItem, list} = await findList()
+  // - Row One [Button Name]
+  // - Row Two ⬜️
+  expect(list).toMatchSnapshot('on initial render')
+  const {clickButton} = await findItem({index: 0})
+  await clickButton()
+  const {toggleCheckbox} = await findItem({index: 1})
+  await toggleCheckbox()
+  // - Row One [Button Name]
+  // - Row Two ✅
+  expect(list).toMatchSnapshot('after toggling checkbox')
+})
 ```
