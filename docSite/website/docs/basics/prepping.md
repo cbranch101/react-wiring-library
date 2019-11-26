@@ -7,9 +7,14 @@ hide_title: true
 
 # Prepping Components
 
-The core idea of `react-wiring-library` is to offload the majority of the annoying DOM traversal / interaction code to the framework, so we can focus on actually testing.  For that to be possible, you need to tell `react-wiring-library` which parts of the DOM tree it should care about.  Most of the time, you'll need to make a few basic changes to your components to make it easier for `react-wiring-library` to find the elements it needs.  Let's start with a basic component to get a feel for what that looks like. 
+The core idea of `react-wiring-library` is to offload the majority of the
+annoying DOM traversal code to the framework, allowing you to focus on testing
+behavior. For that to be possible, you need to tell `react-wiring-library` which
+parts of the DOM it should care about. Most of the time, this means you'll need
+to make a few changes to your components.
 
 ## The Component to Test
+
 ```javascript
 const Todo = ({name}) => {
   const [isCompleted, setIsComplete] = useState(false)
@@ -36,30 +41,35 @@ const TodoList = ({todos}) => {
 
 ## Target Relevant Elements
 
-There are several [different ways](https://testing-library.com/docs/dom-testing-library/api-queries#queries) to target elements based on their content, and if none of those work, we just add `data-testid` attributes where relevant.
+There are several
+[different ways](https://testing-library.com/docs/dom-testing-library/api-queries#queries)
+to target elements based on their content, and if none of those work, we just
+add `data-testid` attributes where relevant.
 
 In `TodoList` there are three elements we care about
+
 - TodoList as a whole
 - Todo
 - The Todo checkbox
 
-In general, focus on elements that are going to change in some relevant way in your tests.  If there's nothing to verify, don't bother targeting or serializing them. 
+In general, focus on elements that are going to change in your tests. If there's
+nothing to verify, don't bother targeting or serializing them.
 
-Because `TodoList` is the top level that were going to call `toMatchSnapshot` on in our tests, it always needs to have a test ID (so the serializer can find it), even if it was possible to target it some other way. 
+Because `TodoList` is the top level element and we're going to call
+`toMatchSnapshot` on it, this element will always need to have a test ID, even
+if we could target it some other way(by text, etc).
 
->Always add the data-testid attribute to the top level of any element you want to serialize
+> Always add the data-testid attribute to the top level of any element you want
+> to serialize so that `react-wirig-library`'s serializers can find it.
 
 ```javascript
 const TodoList = ({todos}) => {
-  return (
-    <ul data-testid="todo-list">
-        ...
-    </ul>
-  )
+  return <ul data-testid="todo-list">...</ul>
 }
 ```
 
-Next, add a test ID to Todo so we can built out the list in serializer and interact with the individual items in the list
+Next, add a test ID to `Todo`. This will let us serialize and interact with the
+individual `Todo`s.
 
 ```javascript
 ...
@@ -69,7 +79,8 @@ Next, add a test ID to Todo so we can built out the list in serializer and inter
 ...
 ```
 
-Finally, target the checkbox so we can can click it
+Finally, target the checkbox so we can can click it.
+
 ```javascript
 ...
   <input
@@ -79,10 +90,6 @@ Finally, target the checkbox so we can can click it
   />
 ...
 ```
-
-
-
-
 
 ## Source Code
 
@@ -114,5 +121,6 @@ const TodoList = ({todos}) => {
 }
 ```
 
-## Next steps 
-Now let's create the basic scaffolding required to actually test
+## Next steps
+
+Next, let's create the basic scaffolding required to actually test.

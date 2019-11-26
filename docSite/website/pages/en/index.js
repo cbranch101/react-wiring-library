@@ -101,7 +101,7 @@ class Index extends React.Component {
             {
               title: '',
               content:
-                '## Readable, intuitive tests \n While `react-testing-library` does a great job of letting you test code the way you use it, getting there requires a lot of so called "wiring" code.  \n Querying to traverse the DOM, interacting with components and then asserting expected values is easy to do, but it ends up requiring a lot of repeated code that muddies up your tests.  `react-wiring-library` lets you offload all of that wiring to the framework, leaving only a series of simple, expressive async function calls that represent each step you want to test.',
+                '## Readable, intuitive tests \n While `react-testing-library` does a great job of letting you test code the way you use it, getting there requires a lot of so called "wiring" code.  \n While querying for elements, triggering events and then asserting expected values is easy to do, it ends up requiring a lot of repeated code that muddies up your tests.  `react-wiring-library` lets you offload all of that wiring to the framework, leaving behind a single call for each step you want to test.',
               image: `${baseUrl}img/wiring.gif`,
               imageAlt: 'The problem (picture of a maze)',
               imageAlign: 'right',
@@ -120,7 +120,7 @@ class Index extends React.Component {
             imageAlign: 'left',
             imageAlt: 'The solution (picture of a light bulb)',
             content:
-              '## Custom Serializers \n No more endless snapshots that output unreadable diffs, and cause misleading, unnecessary test failures. Instead, use our simple api for converting rendered react elements into easy to read, relevant snapshots.',
+              '## Custom Serializers \n No more massive snapshots that output unreadable diffs and cause unnecessary test failures. Instead, use our simple API for converting DOM elements into easy to read strings that capture the relevant details of your components and nothing more.',
           },
         ]}
       </Block>,
@@ -131,21 +131,21 @@ class Index extends React.Component {
         {[
           {
             content:
-              'Assert an entire component with a single call, while being sure that tests only fail when functionaity is broken, and knowing exactly why a test failed.',
+              'Assert an entire component with a single call. You be sure being sure that tests only fail when functionality is broken, and know exactly what went wrong.',
             image: `${baseUrl}img/snapshot.png`,
             imageAlign: 'top',
             title: 'Snapshots that work',
           },
           {
             content:
-              "Test complicated multi-level components without creating mountains of query/interaction code that's hard to understand and annoying to maintain",
+              "Test complicated multi-level components without creating mountains of wiring code that's hard to understand and annoying to maintain.",
             image: `${baseUrl}img/query.png`,
             imageAlign: 'top',
             title: 'Super-charged querying',
           },
           {
             content:
-              'Customize the core api of react-testing-library to the specific needs of your project without compromising the guiding principles that make it work so well',
+              "Customize the core API of `react-testing-library` without compromising it's guiding principles.",
             image: `${baseUrl}img/customize.png`,
             imageAlign: 'top',
             title: 'Principled Customization',

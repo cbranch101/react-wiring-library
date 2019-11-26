@@ -7,15 +7,22 @@ hide_title: true
 
 # Setting up Basic Wiring Structure
 
-Once we know which parts of our component we want to target, and how we're going to target them, it's just a matter of a building out the data structure that `react-wiring-library` will use to traverse your elements.  
+Once we know which parts of our component we want to target, and how we're going
+to target them, it's just a matter of a building out the data structure that
+`react-wiring-library` will use to traverse your elements.
 
-While the different options for capturing all of the different variations of components can get pretty involved, the core idea is very simple.  You're going to be building a tree, where each node in the tree is a DOM element.  Each node will describe how to find that DOM element, add any required interactions specific to that element, and describe how the element should be serialized in the final snapshot. 
+While the different options for capturing every possible component variation can
+get involved, the core idea is very simple. You're building a tree of DOM
+elements that are relevant to your tests. Each node in the tree will tell
+`react-wiring-library` how to find, interact with, and then serialize a given
+element.
 
 ## Scaffolding
 
-To get started, we need to add a single file called `testRender.js`(just a convention). This function will be a replacement for the standard render function imported from `react-testing-library`.  In general, This file will define all of the test interactions and serializers(wiring) for your entire app. 
-
-In this file, import `getRender` pass in your wiring object, and export the result of calling the function so it can be used in your tests
+To get started, we need to add a single file called `testRender.js`(just a
+convention). This function will be a replacement for the standard render
+function imported from `react-testing-library`. In general, this file contain a
+single wiring tree for your whole app.
 
 ```javascript
 import {getRender} from 'react-wiring-library'
@@ -27,7 +34,9 @@ export default getRender(wiring)
 
 ## First wiring node
 
-Let's fill in the first piece of wiring.  Becaue TodoList is the top level component we want to serialize in our test, let's start there. Let's define a wiring node and target it at the test ID we added in the previous step. 
+As `TodoList` is the top level component and is what we'll be serializer, let's
+start there. Define a wiring node and target it at the test ID we added in the
+previous step.
 
 ```javascript
 const wiring = {
@@ -40,18 +49,28 @@ const wiring = {
 }
 ```
 
-The wiring object is a tree, so the top level key is children.  Setting the key as `todoList` in the children object, means that `findTodoList` will be returned when we call render. 
+The [root node](api/wiring-tree.md#the-root-node) of the wiring tree always has
+[`children`](api/wiring-node.md#children-object). Setting the key as `todoList`
+in this object, means that `findTodoList` will be returned when we call render.
 
-The question then becomes, what should `findTodoList` return when called?  That's where `findType` and `findValue` come in.  `findType` corresponds to a [query type](https://testing-library.com/docs/dom-testing-library/api-queries#findby) from `dom-testing-library` and `findValue` is the argument passed into the `findBy` version of that query. 
+The question then becomes, which DOM element should `findTodoList` return?
+That's where [`findType`](api/wiring-node.md#findtype-string) and
+[`findValue`](api/wiring-node.md#findvalue-string) come in. `findType`
+corresponds to a
+[query type](https://testing-library.com/docs/dom-testing-library/api-queries#findby)
+from `dom-testing-library` and `findValue` is the argument passed into the
+`findBy` version of that query.
 
-So, when we call `findTodoList` it's the equivalent of the following
+So, when we call `findTodoList` it's the equivalent of the following.
 
 ```javascript
 findByTestId('todo-list')
 ```
 
 ## First Serializer
-Now that we the core structure in place, let's add a placeholder serializer to make sure everything is working
+
+Now that we the core structure in place, let's add a placeholder serializer to
+make sure everything is working.
 
 ```javascript
 const wiring = {
@@ -64,12 +83,16 @@ const wiring = {
 }
 ```
 
-Serializers are just functions that take dom elements and return easily readable strings that can be snapshotted in tests.  In this case, we're just returning a static string to confirm the wiring is working
+Serializers are just functions that take DOM elements and return easily readable
+strings. In this case, we're just returning a static string to confirm the tree
+is working.
 
 ## First test
-Now that we have some wiring to work with, we can actually use `react-wiring-library` to interact with our component in tests. 
 
-Let's create a new test called `TodoList.test.js` and render `TodoList` in simple test using the function we created in `testRender.js`
+Now that we have some wiring to work with, we can actually use
+`react-wiring-library` to interact with our component in tests.
+
+Let's create a new test called `TodoList.test.js`.
 
 ```javascript
 import React from 'react'
@@ -78,7 +101,7 @@ import TodoList from './TodoList'
 
 describe('TodoList', () => {
   test('should render a list of todos', async () => {
-    const {findTodoList, serialize } = render(
+    const {findTodoList, serialize} = render(
       <TodoList
         todos={[
           {
@@ -94,9 +117,16 @@ describe('TodoList', () => {
 })
 ```
 
-You can see this behaves very similarly to the standard render function from `react-testing-library`, with the only exception being that we get back a custom function called `findTodoList`. This, you'll remember, is based on the fact that we used `todoList` as a key in the top level children object.
+You can see this behaves very similarly to the standard render function from
+`react-testing-library`. The exception is that we get back a custom function
+called `findTodoList`. This, you'll remember, is based on the fact that we used
+`todoList` as a key in `children` object the
+[root node](api/wiring-tree.md#the-root-node).
 
-Calling `findTodoList` gets us back a `todoList` object that points at our rendered component that we can pass into `toMatchSnapshot` which will then call the serializers and render out a nice, readable snapshot.  For now, let's just call the `serialize` helper.  Instead of actually generating snapshot, the serializer just logs the content of the snapshot to the console. 
+Calling `findTodoList` gets us back a `todoList` DOM element that we can pass
+into `toMatchSnapshot` to render out a nice, readable snapshot. For now, let's
+just call the `serialize` helper. Instead of actually generating snapshot,
+`serialize` just logs the content of the snapshot to the console.
 
 ```javascript
 describe('TodoList', () => {
@@ -114,10 +144,13 @@ after calling serialize, this is what we see in the console
 TodoList
 ```
 
-Great! This means that supplied test ID is being being found and our component is being serialized according to the `serialize` function we passed in.  
+Great! This means that supplied test ID is being being found and our component
+is being serialized according to the `serialize` function we passed in.
 
 ## Source Code
+
 ### testRender.js
+
 ```javascript
 import {getRender} from 'react-wiring-library'
 
@@ -133,11 +166,13 @@ const wiring = {
 
 export default getRender(wiring)
 ```
+
 ### TodoList.test.js
+
 ```javascript
 describe('TodoList', () => {
   test('should render a list of todos', async () => {
-    const {findTodoList, serialize } = render(
+    const {findTodoList, serialize} = render(
       <TodoList
         todos={[
           {
@@ -149,27 +184,13 @@ describe('TodoList', () => {
         ]}
       />,
     )
-    const { todoList } = await findTodoList();
-    serialize(todoList);
+    const {todoList} = await findTodoList()
+    serialize(todoList)
   })
 })
 ```
 
-
 ## Next Steps
 
-With the foundation in place, now we can generate a snapshot that captures everything relevant about our component.  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+With the foundation in place, we can generate a snapshot that captures
+everything interesting about `TodoList`.
