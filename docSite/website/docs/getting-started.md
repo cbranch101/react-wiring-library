@@ -45,7 +45,7 @@ are available, and how they work.
 
 ## 3. Run the example
 
-Copy this test into your project and run it.
+Copy this test into a project and run it.
 
 ```javascript
 import {getRender} from 'react-wiring-library'
