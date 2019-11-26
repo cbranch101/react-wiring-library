@@ -45,6 +45,9 @@ class Footer extends React.Component {
             <a href={this.docUrl('api/wiring-tree.html', this.props.language)}>
               API
             </a>
+          </div>
+          <div>
+            <h5>More</h5>
             <a href="https://github.com/cbranch101/react-wiring-library">
               GitHub
             </a>
@@ -52,7 +55,7 @@ class Footer extends React.Component {
               className="github-button"
               href={this.props.config.repoUrl}
               data-icon="octicon-star"
-              data-count-href="/facebook/docusaurus/stargazers"
+              data-count-href="/cbranch101/react-wiring-library/stargazers"
               data-show-count="true"
               data-count-aria-label="# stargazers on GitHub"
               aria-label="Star this project on GitHub"

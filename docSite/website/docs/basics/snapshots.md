@@ -5,14 +5,14 @@ sidebar_label: Building Readable Snapshots
 hide_title: true
 ---
 
-
-
 # Building Readable Snapshots
-With the outline of the wiring structure in place, and working in a test, let's go about turning our basic static string into a representation of TodoList that's simple enough to parse quickly, but detailed enough to capture all of the ways our tests could go wrong
 
-First, let's just review the component in question
+With our basic serializer in place, let's turn `TodoList` into a string that's
+simple enough to understand quickly, but detailed enough to capture all of the
+ways our tests could go wrong.
 
 ## Component To Test
+
 ```
 const Todo = ({name}) => {
   const [isCompleted, setIsComplete] = useState(false)
@@ -42,9 +42,10 @@ const TodoList = ({todos}) => {
 ```
 
 ## Wiring Node for Todo
-A good way to work through adding serializers is to start from the top, and work your way down, adding more detail as you go.  The next level below `TodoList` is `Todo`, so let's set up wiring for that next. 
 
-`Todo` intoduces a new wrinkle we haven't encountered yet, which is a dom element that exists in the dom multiple times at once(in this case a list).  This is what a "multiple" wiring node looks like. 
+Directly below `TodoList`, we see a new wrinkle we haven't encountered yet.
+`Todo` is DOM element that appears multiple times at once. Let's add a node to
+handle for this.
 
 ```javascript
 const wiring = {
@@ -64,22 +65,36 @@ const wiring = {
 }
 ```
 
-It's worth noting that `findType: testId` is no longer being provided here, because it's the default. 
+It's worth noting that `findType: testId` is no longer being provided here,
+because it's the default.
 
-Because `todo` is part of a list and is in the dom multiple times, we need to pass `isMultiple` so `react-wiring-library` knows how to handle it correctly.  
+Adding `isMultiple` to a wiring node makes `react-wiring-library` treat is as an
+array.
 
-A few different parts of the wiring system will be aware of this change down the road, but for now it's enough to remeber to pass `isMultiple` if the `findValue` you're querying for can be in the dom multiple times at once. 
+A few different parts of the wiring system will be aware of this change down the
+road, but for now it's enough to remember to pass `isMultiple` if the
+`findValue` you're querying can be found more than once.
 
-Let's quickly rerun the test to see what it did to the value being logged when we call `serialize`
+> Internally, adding `isMultiple` to a node causes the `find{childNode}` helper
+> for that node to use `findAllBy` instead of `findBy`
+
+Let's quickly rerun the test to see how the value of `serialize` has changed.
 
 ```
 TodoList
 ```
 
-Nothing has changed.  This is because the `todoList` wiring just always returns the same string.  To display something useful, `todoList` needs to do something with the values being returned by its children. 
+It hasn't changed at all. This is because the `todoList` wiring always returns
+the same string. To display something useful, the `todoList` `serialize`
+function needs to combine the serialized values of its children.
 
 ## Combining Todos into TodoList
-Let's make the serialize in `todoList` a little bit more robust.  The first two arguments passed to `serialize` are the dom element being serialized(in this case, the TodoList), followed by an object of containing all of the serialized strings for all of this node's children(along with some useful helper functions).  All we need to do is get the child strings and combine them together. 
+
+In addition to all of the helpers for the element being serialized, the object
+in the second argument of `serialize` will also contain the serialized strings
+of all of its children. In this case, because `Todo` has `isMultiple`, and a
+wiring key of `todo`, the passed variable is an array of strings called
+`todoStrings`
 
 ```javascript
     ...
@@ -96,36 +111,44 @@ Let's make the serialize in `todoList` a little bit more robust.  The first two 
     }
 ```
 
-Before serialize is called for any wiring node, all of its children are serialized, and all of their values are passed into the parent serialize function as a string called `${nodeKey}String` for a standard node or an array of of strings called `${nodeKey}Strings` for an `isMultiple` node. 
+> The second argument of `serialize` will be passed a `{childNode}String` string
+> for standard nodes, and a `{childNode}Strings` array for `isMultiple` nodes.
 
-In this case, we're just taking an array of `todoStrings` (which all are `-Todo`)and combining them together with new line characters to make a list. 
+For `TodoList` to correct handle it's children, all we need to do is combine the
+array of serialized string in `todoStrings` together.
 
->In general, when combining together multiple elements in serializers, try to have them on multiple lines instead of on a single line.  When a test fails the diff that jest displays for the snapshot is MUCH more readable when values are on separate lines
+> In general, when combining together multiple elements in serializers, try to
+> have them on multiple lines instead of on a single line. When a test fails the
+> diff that jest displays for the snapshot is easier to read when the values are
+> on separate lines.
 
-After this change, serialize shows
+After this change, serialize shows the following.
 
 ```
 -TodoList
 -TodoList
 ```
 
-## The Combine Helper
-This kind of operation of where we take multiple strings from children and combine them together, separated by new lines in the parent happens very frequently.  For that reason, serialize gets passed a helper called `combine` for just such a task.  Let's use that here to clean up our serialize a little bit. 
+This pattern of combining the serialized child strings on their own line is very
+commen. For that reason, the second argument of `serialize` gets passed a helper
+called `combine` for just such a task.
 
 ```javascript
     ...
     todoList: {
       ...
-      serialize: (val, {todoStrings}) => combine(...todoStrings),
+      serialize: (val, {todoStrings, combine}) => combine(...todoStrings),
       ...
     }
 ```
 
-Combine takes an argument list of strings, with the list being separated by new lines.  If undefined is passed for an argument, no new line will be added.
+All of the strings passed to `combine` will be joined together on their own line
+with undefined values being skipped.
 
 ## Fully serialize Todo
 
-With the list in place, let's make Todo use the actual content rendered to the dom. 
+With the list in place, let's make Todo use the actual content rendered to the
+DOM.
 
 ```javascript
     todoList: {
@@ -139,15 +162,17 @@ With the list in place, let's make Todo use the actual content rendered to the d
     }
 ```
 
-`val` in this case is the dom node for the todo, so we're able to just get its `textContent` and serialize that. 
+`val` in this case is the `Todo` DOM node, so we're able to just get its
+`textContent` and add it to our string.
 
 `serialize` in our test now reads
+
 ```
 -Todo One
 -Todo Two
 ```
 
-Next, let's add a new child node for the checkbox, and serialize it
+Next, let's add a new child node for the checkbox, and serialize it as well.
 
 ```javascript
         todo: {
@@ -161,9 +186,14 @@ Next, let's add a new child node for the checkbox, and serialize it
         },
 ```
 
-Everything here should look pretty standard at this point.  We're using a test ID to target the checkbox, and then using the provided dom element to serialize it so we can tell when the checkbox is checked.  One thing worth nothing however, is that emoji are your friend when writing serializers.  They convey a lot of information quickly and are handled correctly by the entire jest snapshot pipeline. 
+Everything here should look pretty straightforward at this point. We're using a
+test ID to target the checkbox and then serializing it. One thing worth nothing
+however, is that Emoji are a great option for serializers. They quickly convey
+information and are handled correctly by the jest snapshot pipeline.
 
-As you're probably guessing at this point, if we were to run our test again, nothing will have changed in our serializer, because again, `todo` isn't actually doing anything with `checkbox`.  Let's combine `checkbox` into `todo` to fix that. 
+If we were to run our test, nothing will have changed in our serializer, because
+again, the `todo` node isn't actually doing anything with serialized checkbox.
+Let's use `checkboxString` in the `todo` serializer to fix that.
 
 ```javascript
         todo: {
@@ -184,6 +214,7 @@ And now the serializer reads
 ```
 
 ## Source Code
+
 ### testRender.js
 
 ```javascript
@@ -198,8 +229,8 @@ const wiring = {
         todo: {
           isMultiple: true,
           findValue: 'todo',
-          serialize: (val, { checkBoxString }) => {
-              return `${checkBoxString}${val ? val.textContent : ''}$`
+          serialize: (val, {checkBoxString}) => {
+            return `${checkBoxString}${val ? val.textContent : ''}$`
           },
           children: {
             checkbox: {
@@ -217,24 +248,8 @@ export default getRender(wiring)
 ```
 
 ## Next Steps
-That's pretty much it for the serializer.  We have an easily readable snapshot that will work great for our tests.  Now, all we have to do is actually interact with the component and use our new snapshots to assert that the correct things are happening. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+That's pretty much it for the serializer. We have an easily readable snapshot
+that will work great for our tests. Now, all we have to do is actually interact
+with the component and use our new snapshots to confirm our component is
+behaving correctly.

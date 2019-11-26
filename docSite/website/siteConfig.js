@@ -14,7 +14,7 @@ const users = []
 const siteConfig = {
   title: 'React Wiring Library', // Title for your website.
   tagline:
-    'A declarative framework for building structured react-testing-library tests with readable snapshots and simple reusability',
+    'A declarative framework for react-testing-library that makes testing complicated components easy.',
   url: 'https://react-wiring-library.now.sh', // Your website URL
   baseUrl: '/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -32,6 +32,10 @@ const siteConfig = {
   headerLinks: [
     {doc: 'getting-started', label: 'Docs'},
     {doc: 'api/get-render', label: 'API'},
+    {
+      href: 'https://github.com/cbranch101/react-wiring-library',
+      label: 'GitHub',
+    },
   ],
 
   // If you have users set above, you add it here:

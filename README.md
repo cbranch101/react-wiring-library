@@ -10,7 +10,7 @@
   />
 </a>
 
-<p>A declarative framework for building structured react-testing-library tests with readable snapshots and simple reusability.</p>
+<p>A declarative framework for react-testing-library that makes testing complicated components easy.</p>
 
 <br />
 
@@ -23,8 +23,7 @@
 
 [![Build Status][build-badge]][build]
 [![Code Coverage][coverage-badge]][coverage]
-[![version][version-badge]][package] 
-[![downloads][downloads-badge]][npmtrends]
+[![version][version-badge]][package] [![downloads][downloads-badge]][npmtrends]
 [![MIT License][license-badge]][license]
 
 [![PRs Welcome][prs-badge]][prs]
@@ -32,30 +31,48 @@
 [![Watch on GitHub][github-watch-badge]][github-watch]
 [![Star on GitHub][github-star-badge]][github-star]
 
-
 ## The Problem
 
-You love the core and philosophy of `react-testing-library`, but have hit some walls in trying to write tests for your actual components.  Testing individual behaviors is easy and makes a ton of sense, but when it comes to confirming that everything you expect has rendered into the dom, you're stuck between asserting tons of values, or snapshotting the entire dom(the problems of which are well document here). 
-
-Also, the `react-testing-library` model of calling render to get helpers that are specifically targeted at the component you want to test works great for a single test, but when you try reuse that behavior between multiple tests, it becomes really cumbersome and hard to manage. 
+You've tried `react-testing-library` and love its core API, but have struggled
+with getting to full coverage on complicated components. Testing isolated
+interactions is easy enough, but when multiple parts of a component change at
+once, or you have to take complex sequencing into account, your tests become
+significantly harder to write and maintain.
 
 ## The Solution
 
-`react-wiring-library` is a declarative framework for describing the relevant structure of the components you want to test.  Once you have your components described using simple tree structure, you can create readable, relevant snapshots that capture every value you care about in a single assert.  It also lets you create a simple api of reusable interactions functions that scale with your tests. 
+By letting you describe the relevant structure of your component tree in
+advance, `react-wiring-library` makes fully testing complicated components not
+only possible, but intuitive and scalable.
+
+The wiring tree's structure lets you fully wrangle your interaction code,
+generate developer friendly snapshots, and easily customize
+`react-testing-library`'s api to the specifics of your project.
 
 ## Installation
+
 ```bash
-yarn add --dev react-wiring-library 
+yarn add --dev react-wiring-library
 ```
 
 ```bash
-npm install --save-dev react-wiring-library
+yarn add --dev @testing-library/react
 ```
 
-## Example
-```jsx
+## Prerequisites
+
+`react-wiring-library` is built off of `react-testing-library`, so a basic
+familiarity with that framework is required. In particular, make sure to take a
+look at the different
+[queries](https://testing-library.com/docs/dom-testing-library/api-queries) that
+are available, and how they work.
+
+## Run The Example
+
+Copy this test into your project and run it.
+
+```javascript
 import {getRender} from 'react-wiring-library'
-import React from 'react'
 import React, {useState} from 'react'
 
 const Todo = ({name}) => {
@@ -67,7 +84,7 @@ const Todo = ({name}) => {
         onClick={() => setIsComplete(prev => !prev)}
         type="checkbox"
       />
-      {isCompleted && <span>{name}</span>}
+      {!isCompleted && <span>{name}</span>}
     </div>
   )
 }
@@ -87,12 +104,13 @@ const TodoList = ({todos}) => {
 const wiringTree = {
   children: {
     // query will be findTodoList and returned object will be todoList
+
     todoList: {
       // findTodoList => findByTestId('todo-list')
       findValue: 'todo-list',
       // combine the child `todoStrings` into a single string with each todo on a new line
       serialize: (val, {todoStrings}) => {
-        todoStrings.map(todoString => `${todoString}\n`)
+        return todoStrings.map(string => `- ${string}`).join('\n')
       },
       children: {
         todo: {
@@ -111,15 +129,15 @@ const wiringTree = {
           },
           // combine the serialized check box with the text content of the 'todo' DOM node
           // - ✅ Todo One
-          serialize: (val, {checkBoxString}) => {
-            return `${checkBoxString}${val ? val.textContent : ''}$`
+          serialize: (val, {checkboxString}) => {
+            return `${checkboxString}  ${val ? val.textContent : ''}`
           },
           children: {
             checkbox: {
               //findCheckbox = () => findByTestId('checkbox')
               findValue: 'checkbox',
               // convert the checkbox DOM node into the appropriate emoji
-              serialize: val => (val.checked ? '☑️' : '◻️'),
+              serialize: val => (val.checked ? '✅' : '⬜️'),
             },
           },
         },
@@ -163,6 +181,28 @@ describe('TodoList', () => {
   })
 })
 ```
+
+## Get a Feel
+
+First, take a look at the snapshots generated after the tests run. If you're
+using VSCode, we'd highly recommend adding
+[snapshot-tools](https://marketplace.visualstudio.com/items?itemName=asvetliakov.snapshot-tools)
+to make it easier work with snapshots.
+
+Here's a few things you could try to familiarize yourself with the basics.
+
+- Comment out the toggle call on line 143 and see how the tests fail.
+- Add a new assert for clicking on the second todo.
+- Change the values returned by the serializers and note how the tests fail.
+- Change the `data-testid` attribute on `todo` to something else, and note the
+  error that gets thrown.
+- Change the key of `todoList` to just `list` and update everything that's
+  dependent on the change.
+
+## Next Steps
+
+Now that you've got the lay of the land, check out the
+[basic tutorials](<[basics/prepping.md](http://localhost:3000/docs/basics/prepping)>)
 
 ## LICENSE
 
