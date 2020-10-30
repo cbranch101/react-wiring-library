@@ -2,66 +2,12 @@ import * as baseRootFunctions from '@testing-library/react'
 import {getGlobalFunctions, getQueryFunctions} from './functionHelpers'
 
 const {
-  waitForElement,
   wait,
   within,
   render: defaultRender,
   fireEvent,
-  queryHelpers,
-  buildQueries,
   waitForDomChange,
 } = baseRootFunctions
-
-const getQueriesFromFunction = (func, type) => {
-  const getMultipleError = (c, findValue) =>
-    `Found multiple elements with ${type} of ${findValue}`
-  const getMissingError = (c, findValue) =>
-    `Unable to find an element with ${type} of ${findValue}`
-
-  const [queryBy, getAllBy, getBy, findAllBy, findBy] = buildQueries(
-    func,
-    getMultipleError,
-    getMissingError,
-  )
-
-  const namedQueries = {
-    queryAllBy: func,
-    queryBy,
-    getAllBy,
-    getBy,
-    findAllBy,
-    findBy,
-  }
-
-  return Object.keys(namedQueries).reduce(
-    (memo, queryName) => ({
-      ...memo,
-      [`${queryName}${type}`]: namedQueries[queryName],
-    }),
-    {},
-  )
-}
-
-export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
-  const customQueries = Object.keys(queryMap).reduce((memo, type) => {
-    const func = queryMap[type]
-    return {
-      ...memo,
-      ...getQueriesFromFunction(func, type),
-    }
-  }, {})
-  const wrappedCustomQueries = Object.keys(customQueries).reduce(
-    (wrapped, queryName) => ({
-      ...wrapped,
-      [queryName]: (...args) => customQueries[queryName](val, ...args), // eslint-disable-line import/namespace
-    }),
-    {},
-  )
-  return {
-    ...funcs,
-    ...wrappedCustomQueries,
-  }
-}
 
 export const getAllFunctions = (
   baseFunctions,
