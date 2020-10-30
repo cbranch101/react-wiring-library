@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Queries custom queries should work with all built in functions: initial render 1`] = `Root`;
+
+exports[`Plugins when getCustomFunctions is added to a plugin returned global functions should be returned from render: initial render 1`] = `Root`;
+
+exports[`Plugins when getCustomFunctions is added to a plugin: initial render 1`] = `Root`;
