@@ -9,6 +9,8 @@ import {
 
 const getDefaultGlobalFunctions = ({baseElement}) => ({
   withinBaseElement: () => within(baseElement),
+  fireEvent,
+  wait,
   clickElement: element => fireEvent.click(element),
   typeIntoElement: (text, element) => {
     fireEvent.change(element, {target: {value: text}})
@@ -169,5 +171,56 @@ export const getGlobalFunctions = ({
   return {
     ...defaultGlobalFunctions,
     ...customGlobalFunctions,
+  }
+}
+
+const getDefaultWithinElementFunctions = ({
+  element,
+  renderFunctions,
+  globalFunctions,
+}) => {
+  const {getByTestId, within} = renderFunctions
+
+  const {
+    clickElement,
+    focusElement,
+    blurElement,
+    typeIntoElement,
+  } = globalFunctions
+  const getTextContent = id => getByTestId(id).textContent
+  const testId = element && element.getAttribute('data-testid')
+  return {
+    testId,
+    getTextContent,
+    within,
+    getTextContents: testIds => testIds.map(getTextContent),
+    click: () => clickElement(element),
+    focus: () => focusElement(element),
+    typeInto: text => typeIntoElement(text, element),
+    blur: () => blurElement(element),
+  }
+}
+
+export const getWithinElementFunctions = ({
+  element,
+  getCustomWithinElementFunctions,
+  renderFunctions,
+  queryFunctions,
+  globalFunctions,
+}) => {
+  const defaultWithinElementFunctions = getDefaultWithinElementFunctions({
+    element,
+    renderFunctions,
+    globalFunctions,
+  })
+  const customWithinElementFunctions = getCustomWithinElementFunctions({
+    ...renderFunctions,
+    ...defaultWithinElementFunctions,
+    ...globalFunctions,
+    ...queryFunctions,
+  })
+  return {
+    ...defaultWithinElementFunctions,
+    ...customWithinElementFunctions,
   }
 }

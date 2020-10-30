@@ -39,6 +39,25 @@ const getQueryFunction = ({
 
 const getWiringWithTypesApplied = ({parent, wiringNode, functionsToPass}) => {}
 
+const getWithinElementFunctions = ({
+  getCustomWithinElementFunctions,
+  renderFunctions,
+  queryFunctions,
+  globalFunctions,
+}) => {
+  const defaultWithinElementFunctions = getDefaultWithinElementFunctions({
+    renderFunctions,
+    globalFunctions,
+    queryFunctions,
+  })
+  const customWithinElementFunctions = getCustomWithinElementFunctions({
+    ...defaultWithinElementFunctions,
+    ...globalFunctions,
+    ...queryFunctions,
+    ...renderFunctions,
+  })
+}
+
 const serializeElement = ({
   element,
   wiringNode,

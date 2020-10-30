@@ -1,13 +1,11 @@
 import * as baseRootFunctions from '@testing-library/react'
-import {getGlobalFunctions, getQueryFunctions} from './functionHelpers'
+import {
+  getGlobalFunctions,
+  getQueryFunctions,
+  getWithinElementFunctions,
+} from './functionHelpers'
 
-const {
-  wait,
-  within,
-  render: defaultRender,
-  fireEvent,
-  waitForDomChange,
-} = baseRootFunctions
+const {within, render: defaultRender} = baseRootFunctions
 
 export const getAllFunctions = (
   baseFunctions,
@@ -16,7 +14,6 @@ export const getAllFunctions = (
   customQueries,
 ) => {
   const {container, baseElement = document.body} = baseFunctions
-  const testId = container && container.getAttribute('data-testid')
   const queryFunctions = getQueryFunctions({
     element: container,
     queryMap: customQueries,
@@ -28,9 +25,7 @@ export const getAllFunctions = (
     ...baseFunctions,
     ...queryFunctions,
   }
-  const {debug, getByTestId} = funcs
-
-  const getTextContent = id => getByTestId(id).textContent
+  const {debug} = funcs
 
   const wrappedWithin = element => {
     const returnFromWithin = within(element)
@@ -47,21 +42,20 @@ export const getAllFunctions = (
     )
   }
 
-  const withinBaseElement = () => wrappedWithin(baseElement)
-
   const newFunctions = {
     ...funcs,
-    testId,
-    getTextContent,
-    getTextContents: testIds => testIds.map(getTextContent),
-    fireEvent,
-    withinBaseElement,
-    wait,
-    within: wrappedWithin,
-    waitForDomChange,
     ...globalFunctions,
   }
-  const withinElementFunctions = getWithinElementCustomFunctions(newFunctions)
+  const withinElementFunctions = getWithinElementFunctions({
+    element: container,
+    getCustomWithinElementFunctions: getWithinElementCustomFunctions,
+    renderFunctions: {
+      ...baseFunctions,
+      within: wrappedWithin,
+    },
+    queryFunctions,
+    globalFunctions,
+  })
   return {
     ...newFunctions,
     ...withinElementFunctions,
