@@ -1,5 +1,5 @@
 import * as baseRootFunctions from '@testing-library/react'
-import {getGlobalFunctions} from './functionHelpers'
+import {getGlobalFunctions, getQueryFunctions} from './functionHelpers'
 
 const {
   waitForElement,
@@ -71,59 +71,18 @@ export const getAllFunctions = (
 ) => {
   const {container, baseElement = document.body} = baseFunctions
   const testId = container && container.getAttribute('data-testid')
-  const funcs = addCustomQueriesToFunctions(
-    baseFunctions,
-    customQueries,
-    container,
-  )
-  const {clickElement} = globalFunctions
+  const queryFunctions = getQueryFunctions({
+    element: container,
+    queryMap: customQueries,
+    globalFunctions,
+    returnedFunctions: baseFunctions,
+  })
+
+  const funcs = {
+    ...baseFunctions,
+    ...queryFunctions,
+  }
   const {debug, getByTestId} = funcs
-
-  const baseTypes = [
-    'Text',
-    'TestId',
-    'AltText',
-    'PlaceholderText',
-    ...Object.keys(customQueries),
-  ]
-
-  const builtFunctions = baseTypes.reduce((memo, typeName) => {
-    const buildFunctions = ({getByType, queryByType}) => {
-      const waitForType = input => waitForElement(() => getByType(input))
-      const clickType = input => clickElement(getByType(input))
-      const makeSureTypeIsGone = input => queryByType(input) === null
-      const waitForTypeAndClick = async input => {
-        const element = await waitForType(input)
-        clickElement(element)
-        return element
-      }
-
-      const eliminateByType = input => {
-        return wait(() => {
-          if (!makeSureTypeIsGone(input)) {
-            throw Error(
-              `${typeName} ${input} is still found in the dom ` +
-                'it was supposed to be removed ',
-            )
-          }
-        })
-      }
-
-      return {
-        [`eliminateBy${typeName}`]: eliminateByType,
-        [`click${typeName}`]: clickType,
-        [`findBy${typeName}AndClick`]: waitForTypeAndClick,
-      }
-    }
-
-    return {
-      ...memo,
-      ...buildFunctions({
-        getByType: funcs[`getBy${typeName}`],
-        queryByType: funcs[`queryBy${typeName}`],
-      }),
-    }
-  }, {})
 
   const getTextContent = id => getByTestId(id).textContent
 
@@ -147,7 +106,6 @@ export const getAllFunctions = (
   const newFunctions = {
     ...funcs,
     testId,
-    ...builtFunctions,
     getTextContent,
     getTextContents: testIds => testIds.map(getTextContent),
     fireEvent,
