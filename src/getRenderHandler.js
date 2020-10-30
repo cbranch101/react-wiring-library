@@ -1,4 +1,5 @@
 import * as baseRootFunctions from '@testing-library/react'
+import {getGlobalFunctions} from './functionHelpers'
 
 const {
   waitForElement,
@@ -60,20 +61,6 @@ export const addCustomQueriesToFunctions = (funcs, queryMap, val) => {
     ...funcs,
     ...wrappedCustomQueries,
   }
-}
-
-export const defaultGlobalFunctions = {
-  clickElement: element => fireEvent.click(element),
-  typeIntoElement: (text, element) => {
-    fireEvent.change(element, {target: {value: text}})
-  },
-  focusElement: element => {
-    fireEvent.focus(element)
-  },
-  blurElement: element => {
-    fireEvent.blur(element)
-  },
-  waitForDomChange,
 }
 
 export const getAllFunctions = (
@@ -181,19 +168,21 @@ export default ({
   render = defaultRender,
   customQueries,
   customFunctions: {
-    global: getGlobalCustomFunctions,
+    global: getCustomGlobalFunctions,
     withinElement: getWithinElementCustomFunctions,
   },
 }) => (...args) => {
   const baseFunctions = render(...args)
-  const globalFunctions = getGlobalCustomFunctions({
-    ...baseFunctions,
-    ...defaultGlobalFunctions,
+
+  const globalFunctions = getGlobalFunctions({
+    returnedFunctions: baseFunctions,
+    getCustomGlobalFunctions,
+    baseElement: baseFunctions.baseElement,
   })
 
   return getAllFunctions(
     baseFunctions,
-    {...defaultGlobalFunctions, ...globalFunctions},
+    globalFunctions,
     getWithinElementCustomFunctions,
     customQueries,
   )
