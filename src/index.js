@@ -1,106 +1,10 @@
 import {addAllCustomFunctions, combine} from './helpers'
+import {
+  getWiringWithTypesApplied,
+  getQueryFunction,
+  uppercaseFirstLetter,
+} from './functionHelpers'
 import getRenderHandler from './getRenderHandler'
-
-const uppercaseFirstLetter = string =>
-  string.charAt(0).toUpperCase() + string.slice(1)
-
-const getQueryFunction = ({
-  isMultiple,
-  functions,
-  queryType,
-  isInBase,
-  targetType,
-}) => {
-  const {withinBaseElement} = functions
-  const currentFunctions = isInBase ? withinBaseElement() : functions
-  const fullTargetType = uppercaseFirstLetter(targetType)
-  const findOne = `${queryType}By${fullTargetType}`
-  const findMany = `${queryType}AllBy${fullTargetType}`
-  const findName = isMultiple ? findMany : findOne
-  return currentFunctions[findName]
-}
-
-const getWiringWithTypesApplied = (parent, wiring, functions) => {
-  const {
-    getCurrentType,
-    types,
-    extend = () => ({}),
-    children,
-    serialize = () => {},
-  } = wiring
-  if (!getCurrentType || !types) {
-    return {...wiring, extend, serialize}
-  }
-  const type = getCurrentType(parent, functions)
-  if (!type) {
-    return {...wiring, extend, serialize}
-  }
-  const {
-    types: typesForType,
-    getCurrentType: getCurrentTypeForType,
-    extend: extendForType,
-    children: childrenForType,
-    serialize: serializeForType,
-  } = types[type]
-  const applyTypeToExtend = () => {
-    if (!extendForType) {
-      return extend
-    }
-
-    return (val, functions) => {
-      const extendedFunctions = extend(val, functions)
-      const functionsForType = extendForType(val, {
-        ...functions,
-        ...extendedFunctions,
-      })
-      return {
-        ...extendedFunctions,
-        ...functionsForType,
-      }
-    }
-  }
-
-  const applyTypeToChildren = () => {
-    if (!childrenForType) {
-      return children
-    }
-    return {
-      ...(children || {}),
-      ...childrenForType,
-    }
-  }
-
-  const applyTypeToSerialize = () => {
-    if (!serializeForType) {
-      return serialize
-    }
-    return (val, functions) => {
-      const baseString = serialize(val, functions)
-      return serializeForType(val, functions, baseString)
-    }
-  }
-
-  const updatedWiring = {
-    ...wiring,
-    extend: applyTypeToExtend(),
-    children: applyTypeToChildren(),
-    serialize: applyTypeToSerialize(),
-  }
-
-  if (!typesForType || !getCurrentTypeForType) {
-    return updatedWiring
-  }
-
-  return getWiringWithTypesApplied(
-    parent,
-    {
-      ...updatedWiring,
-      types: typesForType,
-      getCurrentType: getCurrentTypeForType,
-    },
-    functions,
-  )
-}
 
 const serializeElement = (
   wiringItem,
@@ -175,110 +79,6 @@ const getDefaultFunctions = (
   blur: () => blurElement(element),
 })
 
-const addExtraFunctions = (
-  wiringMap,
-  baseFunctions,
-  extend = () => ({}),
-  parent,
-) => {
-  const {within} = baseFunctions
-  const functions = {
-    ...baseFunctions,
-  }
-
-  const defaultFunctions = getDefaultFunctions(functions, parent)
-
-  const updatedFunctions = Object.keys(wiringMap).reduce((memo, wiringKey) => {
-    const findName = `find${uppercaseFirstLetter(wiringKey)}`
-    const find = async (findArgs = {}) => {
-      const wiring = wiringMap[wiringKey]
-      const {
-        findValue,
-        findType = 'testId',
-        isMultiple,
-        shouldFindInBaseElement,
-      } = wiring
-      const {index, filter} = findArgs
-      const performFind = async () => {
-        const query = getQueryFunction({
-          functions,
-          isInBase: shouldFindInBaseElement,
-          targetType: uppercaseFirstLetter(findType),
-          targetValue: findValue,
-          isMultiple,
-          queryType: 'find',
-        })
-        const found = await query(findValue)
-        const foundElements = isMultiple ? found : [found]
-        if (!isMultiple) {
-          return foundElements[0]
-        }
-        if (index !== undefined) {
-          const element = foundElements[index]
-          if (!element) {
-            throw new Error(
-              `You tried to find index ${index} in ${findName} but ${foundElements.length} is the highest index`,
-            )
-          }
-          return element
-        }
-        if (filter !== undefined) {
-          const filteredElements = foundElements.filter(element =>
-            filter(element, element.getAttribute('data-testid')),
-          )
-
-          if (filteredElements.length === 0) {
-            throw new Error(
-              `the filter function passed into ${findName} didn't find anything`,
-            )
-          }
-
-          if (filteredElements.length > 1) {
-            throw new Error(
-              `the filter function passed into ${findName} returned ${foundElements.length} elements, it should only return one`,
-            )
-          }
-          return filteredElements[0]
-        }
-        throw new Error(
-          `You tried to call ${findName} which was set as isMultiple, without providing either an index, or a filter function`,
-        )
-      }
-      const element = await performFind()
-
-      const returnedFromWithin = within(element)
-      const defaultFunctions = getDefaultFunctions(returnedFromWithin, element)
-      const {children, extend} = getWiringWithTypesApplied(
-        element,
-        wiring,
-        returnedFromWithin,
-      )
-      if (!children) {
-        return {
-          [wiringKey]: element,
-          ...defaultFunctions,
-          ...extend(element, returnedFromWithin),
-        }
-      }
-
-      return {
-        [wiringKey]: element,
-        ...defaultFunctions,
-        ...addExtraFunctions(children, returnedFromWithin, extend, element),
-      }
-    }
-    return {
-      ...memo,
-      [findName]: find,
-    }
-  }, {})
-  return {
-    ...updatedFunctions,
-    ...defaultFunctions,
-    ...extend(parent, {...functions, ...updatedFunctions, ...defaultFunctions}),
-  }
-}
-
 const matchesTestId = (object, testId) => {
   return (
     object &&
@@ -327,6 +127,9 @@ export const getRender = (wiring, config = {}) => {
   return getRenderHandler({
     customQueries,
     render: config.render,
+    wiringChildren: children,
+    extend,
+    queryMap: customQueries,
     customFunctions: {
       global: globalFunctions => {
         const output = global({...globalFunctions, serialize})
@@ -335,16 +138,7 @@ export const getRender = (wiring, config = {}) => {
           serialize,
         }
       },
-      withinElement: withinElementFunctions => {
-        const updatedWithinElementFunctions = withinElement(
-          withinElementFunctions,
-        )
-        return addExtraFunctions(
-          children,
-          {...withinElementFunctions, ...updatedWithinElementFunctions},
-          extend,
-        )
-      },
+      withinElement,
     },
   })
 }

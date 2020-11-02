@@ -51,10 +51,10 @@ const getWithinElementFunctions = ({
     queryFunctions,
   })
   const customWithinElementFunctions = getCustomWithinElementFunctions({
+    ...renderFunctions,
     ...defaultWithinElementFunctions,
     ...globalFunctions,
     ...queryFunctions,
-    ...renderFunctions,
   })
 }
 
@@ -147,7 +147,7 @@ const getWiringFunctions = ({
   wiringChildren,
   queryMap,
   queryFunctions,
-  returnedFunctions,
+  renderFunctions,
   globalFunctions,
   getCustomWithinElementFunctions,
 }) => {

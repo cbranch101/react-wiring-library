@@ -3,6 +3,7 @@ import {
   getGlobalFunctions,
   getQueryFunctions,
   getWithinElementFunctions,
+  getWiringFunctions,
 } from './functionHelpers'
 
 const {within, render: defaultRender} = baseRootFunctions
@@ -69,6 +70,8 @@ export default ({
     global: getCustomGlobalFunctions,
     withinElement: getWithinElementCustomFunctions,
   },
+  wiringChildren,
+  extend,
 }) => (...args) => {
   const baseFunctions = render(...args)
 
@@ -77,11 +80,17 @@ export default ({
     getCustomGlobalFunctions,
     baseElement: baseFunctions.baseElement,
   })
-
-  return getAllFunctions(
-    baseFunctions,
-    globalFunctions,
-    getWithinElementCustomFunctions,
-    customQueries,
-  )
+  return getWiringFunctions({
+    wiringChildren,
+    renderFunctions: baseFunctions,
+    extend,
+    getAllWithinElementFunctions: ({renderFunctions}) => {
+      return getAllFunctions(
+        renderFunctions,
+        globalFunctions,
+        getWithinElementCustomFunctions,
+        customQueries,
+      )
+    },
+  })
 }
