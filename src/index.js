@@ -69,16 +69,6 @@ const serializeElement = (
   })
 }
 
-const getDefaultFunctions = (
-  {clickElement, focusElement, blurElement, typeIntoElement},
-  element,
-) => ({
-  click: () => clickElement(element),
-  focus: () => focusElement(element),
-  typeInto: text => typeIntoElement(text, element),
-  blur: () => blurElement(element),
-})
-
 const matchesTestId = (object, testId) => {
   return (
     object &&
