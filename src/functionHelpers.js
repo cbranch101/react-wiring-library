@@ -308,7 +308,7 @@ export const getWiringFunctions = ({
   extend = () => ({}),
   getAllWithinElementFunctions,
 }) => {
-  const functions = getAllWithinElementFunctions({
+  const withinElementFunctions = getAllWithinElementFunctions({
     renderFunctions,
   })
   const wiringFunctions = Object.keys(wiringChildren).reduce(
@@ -325,7 +325,7 @@ export const getWiringFunctions = ({
         const {index, filter} = findArgs
         const performFind = async () => {
           const query = getQueryFunction({
-            functions,
+            functions: withinElementFunctions,
             isInBase: shouldFindInBaseElement,
             targetType: uppercaseFirstLetter(findType),
             targetValue: findValue,
@@ -377,14 +377,9 @@ export const getWiringFunctions = ({
           container: element,
         }
 
-        const withinElementFunctions = getAllWithinElementFunctions({
+        const withinElementFunctionsForChild = getAllWithinElementFunctions({
           renderFunctions: returnedFromWithin,
         })
-
-        const functionsToReturn = {
-          ...returnedFromWithin,
-          ...withinElementFunctions,
-        }
 
         const {children, extend} = getWiringWithTypesApplied(
           element,
@@ -394,20 +389,20 @@ export const getWiringFunctions = ({
         if (!children) {
           return {
             [childName]: element,
-            ...functionsToReturn,
-            ...extend(element, functionsToReturn),
+            ...withinElementFunctionsForChild,
+            ...extend(element, withinElementFunctionsForChild),
           }
         }
 
         return {
           [childName]: element,
+          ...withinElementFunctionsForChild,
           ...getWiringFunctions({
             wiringChildren: children,
             renderFunctions: returnedFromWithin,
             extend,
             getAllWithinElementFunctions,
           }),
-          ...functionsToReturn,
         }
       }
       return {
@@ -419,10 +414,10 @@ export const getWiringFunctions = ({
   )
   return {
     ...wiringFunctions,
-    ...functions,
+    ...withinElementFunctions,
     ...extend(parent, {
       ...wiringFunctions,
-      ...functions,
+      ...withinElementFunctions,
     }),
   }
 }
