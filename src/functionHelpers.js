@@ -191,6 +191,7 @@ const getDefaultWithinElementFunctions = ({
   const testId = element && element.getAttribute('data-testid')
   return {
     testId,
+    container: renderFunctions.container || element,
     getTextContent,
     within,
     getTextContents: testIds => testIds.map(getTextContent),
@@ -305,11 +306,13 @@ export const getWiringWithTypesApplied = (parent, wiring, functions) => {
 export const getWiringFunctions = ({
   wiringChildren,
   renderFunctions,
+  element,
   extend = () => ({}),
   getAllWithinElementFunctions,
 }) => {
   const withinElementFunctions = getAllWithinElementFunctions({
     renderFunctions,
+    element,
   })
   const wiringFunctions = Object.keys(wiringChildren).reduce(
     (memo, childName) => {
@@ -368,39 +371,36 @@ export const getWiringFunctions = ({
             `You tried to call ${findName} which was set as isMultiple, without providing either an index, or a filter function`,
           )
         }
-        const element = await performFind()
+        const childElement = await performFind()
 
-        const returned = within(element)
-
-        const returnedFromWithin = {
-          ...returned,
-          container: element,
-        }
+        const childRenderFunctions = within(childElement)
 
         const withinElementFunctionsForChild = getAllWithinElementFunctions({
-          renderFunctions: returnedFromWithin,
+          renderFunctions: childRenderFunctions,
+          element: childElement,
         })
 
         const {children, extend} = getWiringWithTypesApplied(
-          element,
+          childElement,
           wiringChild,
-          returnedFromWithin,
+          childRenderFunctions,
         )
         if (!children) {
           return {
-            [childName]: element,
+            [childName]: childElement,
             ...withinElementFunctionsForChild,
-            ...extend(element, withinElementFunctionsForChild),
+            ...extend(childElement, withinElementFunctionsForChild),
           }
         }
 
         return {
-          [childName]: element,
+          [childName]: childElement,
           ...withinElementFunctionsForChild,
           ...getWiringFunctions({
             wiringChildren: children,
-            renderFunctions: returnedFromWithin,
+            renderFunctions: childRenderFunctions,
             extend,
+            element: childElement,
             getAllWithinElementFunctions,
           }),
         }

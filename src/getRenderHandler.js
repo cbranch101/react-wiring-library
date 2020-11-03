@@ -85,19 +85,20 @@ export default ({
     wiringChildren,
     renderFunctions,
     extend,
+    element: renderFunctions.container,
     getAllWithinElementFunctions: ({
       renderFunctions: currentRenderFunctions,
+      element,
     }) => {
-      const {container} = currentRenderFunctions
       const queryFunctions = getQueryFunctions({
-        element: container,
+        element,
         queryMap: customQueries,
         globalFunctions,
         renderFunctions: currentRenderFunctions,
       })
 
       const withinElementFunctions = getWithinElementFunctions({
-        element: container,
+        element,
         getCustomWithinElementFunctions: getWithinElementCustomFunctions,
         renderFunctions: currentRenderFunctions,
         queryFunctions,
