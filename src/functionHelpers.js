@@ -72,7 +72,7 @@ const getCustomQueryFunctions = ({element, queryMap}) => {
 }
 
 const getExtraQueryFunctionsForAllTypes = ({
-  returnedFunctions,
+  renderFunctions,
   customQueryFunctions,
   globalFunctions,
   queryMap,
@@ -88,7 +88,7 @@ const getExtraQueryFunctionsForAllTypes = ({
   const {clickElement} = globalFunctions
 
   const allFunctions = {
-    ...returnedFunctions,
+    ...renderFunctions,
     ...customQueryFunctions,
   }
 
@@ -134,7 +134,7 @@ const getExtraQueryFunctionsForAllTypes = ({
 export const getQueryFunctions = ({
   element,
   queryMap = {},
-  returnedFunctions,
+  renderFunctions,
   globalFunctions,
 }) => {
   const customQueryFunctions = getCustomQueryFunctions({
@@ -144,7 +144,7 @@ export const getQueryFunctions = ({
 
   const extraQueryFunctionsForAllTypes = getExtraQueryFunctionsForAllTypes({
     queryMap,
-    returnedFunctions,
+    renderFunctions,
     customQueryFunctions,
     globalFunctions,
   })

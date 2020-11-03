@@ -19,7 +19,7 @@ export const getAllFunctions = (
     element: container,
     queryMap: customQueries,
     globalFunctions,
-    returnedFunctions: baseFunctions,
+    renderFunctions: baseFunctions,
   })
 
   const funcs = {
@@ -73,24 +73,43 @@ export default ({
   wiringChildren,
   extend,
 }) => (...args) => {
-  const baseFunctions = render(...args)
+  const renderFunctions = render(...args)
+  const {baseElement} = renderFunctions
 
   const globalFunctions = getGlobalFunctions({
-    returnedFunctions: baseFunctions,
+    renderFunctions,
     getCustomGlobalFunctions,
-    baseElement: baseFunctions.baseElement,
+    baseElement,
   })
   return getWiringFunctions({
     wiringChildren,
-    renderFunctions: baseFunctions,
+    renderFunctions,
     extend,
-    getAllWithinElementFunctions: ({renderFunctions}) => {
-      return getAllFunctions(
-        renderFunctions,
+    getAllWithinElementFunctions: ({
+      renderFunctions: currentRenderFunctions,
+    }) => {
+      const {container} = currentRenderFunctions
+      const queryFunctions = getQueryFunctions({
+        element: container,
+        queryMap: customQueries,
         globalFunctions,
-        getWithinElementCustomFunctions,
-        customQueries,
-      )
+        renderFunctions: currentRenderFunctions,
+      })
+
+      const withinElementFunctions = getWithinElementFunctions({
+        element: container,
+        getCustomWithinElementFunctions: getWithinElementCustomFunctions,
+        renderFunctions: currentRenderFunctions,
+        queryFunctions,
+        globalFunctions,
+      })
+
+      return {
+        ...currentRenderFunctions,
+        ...globalFunctions,
+        ...queryFunctions,
+        ...withinElementFunctions,
+      }
     },
   })
 }
