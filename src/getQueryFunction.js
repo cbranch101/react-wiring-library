@@ -1,9 +1,6 @@
 import {within} from '@testing-library/react'
-
-export const uppercaseFirstLetter = string =>
-  string.charAt(0).toUpperCase() + string.slice(1)
-
-export const getQueryFunction = ({
+import {uppercaseFirstLetter} from './helpers'
+const getQueryFunction = ({
   isMultiple,
   functions,
   queryType,
@@ -18,3 +15,5 @@ export const getQueryFunction = ({
   const findName = isMultiple ? findMany : findOne
   return currentFunctions[findName]
 }
+
+export default getQueryFunction

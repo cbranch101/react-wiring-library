@@ -1,6 +1,5 @@
 import {fireEvent, waitForDomChange, wait} from '@testing-library/react'
-import {matchesTestId} from './helpers'
-import serializeElement from './serializeElement'
+import getSerializeLog from './getSerializeLog'
 
 const getDefaultGlobalFunctions = () => ({
   fireEvent,
@@ -24,26 +23,12 @@ const getExtendedGlobalFunctions = ({
   getWithinElementCustomFunctions,
   globalFunctions,
 }) => {
-  const serialize = val => {
-    const foundChildName = Object.keys(rootChildren).find(childName =>
-      matchesTestId(val, rootChildren[childName].findValue),
-    )
-    if (!foundChildName) {
-      throw new Error(
-        "Object can't be serialzied,  make sure it's defined in wiring",
-      )
-    }
-    console.log(
-      serializeElement({
-        wiringItem: rootChildren[foundChildName],
-        element: val,
-        getWithinElementCustomFunctions,
-        customQueryMap,
-        globalFunctions,
-      }),
-    )
-  }
-
+  const serialize = getSerializeLog({
+    rootChildren,
+    getWithinElementCustomFunctions,
+    customQueryMap,
+    globalFunctions,
+  })
   return {
     serialize,
   }

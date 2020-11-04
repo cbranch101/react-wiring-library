@@ -1,5 +1,6 @@
 import {within} from '@testing-library/react'
-import {uppercaseFirstLetter, getQueryFunction} from './functionHelpers'
+import {uppercaseFirstLetter} from './helpers'
+import getQueryFunction from './getQueryFunction'
 import getWiringWithTypesApplied from './getWiringWithTypesApplied'
 
 const getWiringFunctions = ({

@@ -1,9 +1,9 @@
 import {within} from '@testing-library/react'
-import {combine} from './helpers'
+import {combine, uppercaseFirstLetter} from './helpers'
 import getWithinElementFunctions from './getWithinElementFunctions'
-import {getQueryFunction, uppercaseFirstLetter} from './functionHelpers'
 import getQueryFunctions from './getQueryFunctions'
 import getWiringWithTypesApplied from './getWiringWithTypesApplied'
+import getQueryFunction from './getQueryFunction'
 
 const serializeElement = ({
   wiringItem,
