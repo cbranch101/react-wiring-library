@@ -1,19 +1,15 @@
-import * as baseRootFunctions from '@testing-library/react'
 import getWiringFunctions from './getWiringFunctions'
 import getQueryFunctions from './getQueryFunctions'
 import getWithinElementFunctions from './getWithinElementFunctions'
 
-const {render: defaultRender} = baseRootFunctions
-
 export default ({
-  render = defaultRender,
+  renderFunctions,
   customQueryMap,
   getWithinElementCustomFunctions,
   globalFunctions,
   wiringChildren,
   extend,
-}) => (...args) => {
-  const renderFunctions = render(...args)
+}) => {
   const {baseElement} = renderFunctions
 
   return getWiringFunctions({
