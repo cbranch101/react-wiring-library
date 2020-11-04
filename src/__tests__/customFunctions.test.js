@@ -77,16 +77,6 @@ describe('Custom Functions', () => {
           'Title Content',
         ])
       })
-
-      test.skip('withinBaseElement should return all withinElement functions within the base element', async () => {
-        const render = getRender(wiring)
-        const {baseElement, withinBaseElement} = render(fixture)
-        const newElement = document.createElement('div')
-        newElement.setAttribute('data-testid', 'in-base-element')
-        baseElement.appendChild(newElement)
-        const {findByTestId} = withinBaseElement()
-        await findByTestId('in-base-element')
-      })
     })
     // describe('in the element context', () => {
     //   describe('if the current element has a data-testid attribute', () => {
@@ -106,7 +96,7 @@ describe('Custom Functions', () => {
   })
   describe('when customFunctions is provided in options', () => {
     describe('and a withinElement function is provided', () => {
-      test.skip('all returned functions should be available from every find function and serialize', async () => {
+      test('all returned functions should be available from every find function and serialize', async () => {
         const options = {
           customFunctions: {
             withinElement: ({container}) => {
@@ -119,11 +109,8 @@ describe('Custom Functions', () => {
         const render = getRender(wiring, options)
 
         const {findWrapper} = render(fixture)
-        const {isDisabled, findLabel} = await findWrapper()
-        console.log(isDisabled)
+        const {isDisabled} = await findWrapper()
         expect(isDisabled()).toEqual(false)
-
-        // pass in a within element function, confirm that it's available and works
       })
     })
     describe('and a global function is provided', () => {
