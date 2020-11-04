@@ -1,10 +1,7 @@
 import * as baseRootFunctions from '@testing-library/react'
-import {
-  getGlobalFunctions,
-  getQueryFunctions,
-  getWithinElementFunctions,
-  getWiringFunctions,
-} from './functionHelpers'
+import getWiringFunctions from './getWiringFunctions'
+import getQueryFunctions from './getQueryFunctions'
+import getWithinElementFunctions from './getWithinElementFunctions'
 
 const {within, render: defaultRender} = baseRootFunctions
 
@@ -49,7 +46,7 @@ export const getAllFunctions = (
   }
   const withinElementFunctions = getWithinElementFunctions({
     element: container,
-    getCustomWithinElementFunctions: getWithinElementCustomFunctions,
+    getCustomFunctions: getWithinElementCustomFunctions,
     renderFunctions: {
       ...baseFunctions,
       within: wrappedWithin,
@@ -66,24 +63,18 @@ export const getAllFunctions = (
 export default ({
   render = defaultRender,
   customQueries,
-  customFunctions: {
-    global: getCustomGlobalFunctions,
-    withinElement: getWithinElementCustomFunctions,
-  },
+  getWithinElementCustomFunctions,
+  globalFunctions,
   wiringChildren,
   extend,
 }) => (...args) => {
   const renderFunctions = render(...args)
   const {baseElement} = renderFunctions
 
-  const globalFunctions = getGlobalFunctions({
-    renderFunctions,
-    getCustomGlobalFunctions,
-    baseElement,
-  })
   return getWiringFunctions({
     wiringChildren,
     renderFunctions,
+    baseElement,
     extend,
     element: renderFunctions.container,
     getAllWithinElementFunctions: ({
@@ -99,7 +90,7 @@ export default ({
 
       const withinElementFunctions = getWithinElementFunctions({
         element,
-        getCustomWithinElementFunctions: getWithinElementCustomFunctions,
+        getCustomFunctions: getWithinElementCustomFunctions,
         renderFunctions: currentRenderFunctions,
         queryFunctions,
         globalFunctions,
