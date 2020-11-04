@@ -7,7 +7,7 @@ const {render: defaultRender} = baseRootFunctions
 
 export default ({
   render = defaultRender,
-  customQueries,
+  customQueryMap,
   getWithinElementCustomFunctions,
   globalFunctions,
   wiringChildren,
@@ -28,7 +28,7 @@ export default ({
     }) => {
       const queryFunctions = getQueryFunctions({
         element,
-        queryMap: customQueries,
+        customQueryMap,
         globalFunctions,
         renderFunctions: currentRenderFunctions,
       })

@@ -30,9 +30,9 @@ const getQueriesFromFunction = (func, type) => {
   )
 }
 
-const getCustomQueryFunctions = ({element, queryMap}) => {
-  const customQueries = Object.keys(queryMap).reduce((memo, type) => {
-    const func = queryMap[type]
+const getCustomQueryFunctions = ({element, customQueryMap}) => {
+  const customQueries = Object.keys(customQueryMap).reduce((memo, type) => {
+    const func = customQueryMap[type]
     return {
       ...memo,
       ...getQueriesFromFunction(func, type),
@@ -51,14 +51,14 @@ const getExtraQueryFunctionsForAllTypes = ({
   renderFunctions,
   customQueryFunctions,
   globalFunctions,
-  queryMap,
+  customQueryMap,
 }) => {
   const baseTypes = [
     'Text',
     'TestId',
     'AltText',
     'PlaceholderText',
-    ...Object.keys(queryMap),
+    ...Object.keys(customQueryMap),
   ]
 
   const {clickElement} = globalFunctions
@@ -109,17 +109,17 @@ const getExtraQueryFunctionsForAllTypes = ({
 
 const getQueryFunctions = ({
   element,
-  queryMap = {},
+  customQueryMap = {},
   renderFunctions,
   globalFunctions,
 }) => {
   const customQueryFunctions = getCustomQueryFunctions({
     element,
-    queryMap,
+    customQueryMap,
   })
 
   const extraQueryFunctionsForAllTypes = getExtraQueryFunctionsForAllTypes({
-    queryMap,
+    customQueryMap,
     renderFunctions,
     customQueryFunctions,
     globalFunctions,

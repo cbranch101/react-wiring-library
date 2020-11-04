@@ -4,7 +4,7 @@ import serializeElement from './serializeElement'
 import {matchesTestId} from './helpers'
 
 export const getRender = (wiring, config = {}) => {
-  const {customFunctions = {}, customQueries = {}} = config
+  const {customFunctions = {}, customQueries: customQueryMap = {}} = config
   const {
     global: getCustomGlobalFunctions = () => ({}),
     withinElement: getWithinElementCustomFunctions = () => ({}),
@@ -14,7 +14,7 @@ export const getRender = (wiring, config = {}) => {
   const globalFunctions = getGlobalFunctions({
     getCustomGlobalFunctions,
     getWithinElementCustomFunctions,
-    customQueries,
+    customQueryMap,
     rootChildren: children,
   })
 
@@ -22,24 +22,22 @@ export const getRender = (wiring, config = {}) => {
     expect.addSnapshotSerializer({
       test: val => matchesTestId(val, wiring.children[key].findValue),
       print: val => {
-        return serializeElement(
-          wiring.children[key],
-          val,
-          customFunctions,
-          customQueries,
-          globalFunctions,
+        return serializeElement({
+          wiringItem: wiring.children[key],
+          element: val,
           getWithinElementCustomFunctions,
-        )
+          customQueryMap,
+          globalFunctions,
+        })
       },
     })
   })
 
   return getRenderHandler({
-    customQueries,
     render: config.render,
     wiringChildren: children,
     extend,
-    queryMap: customQueries,
+    customQueryMap,
     getWithinElementCustomFunctions,
     globalFunctions,
   })

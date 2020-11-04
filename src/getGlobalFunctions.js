@@ -20,7 +20,7 @@ const getDefaultGlobalFunctions = () => ({
 
 const getExtendedGlobalFunctions = ({
   rootChildren,
-  customQueries,
+  customQueryMap,
   getWithinElementCustomFunctions,
   globalFunctions,
 }) => {
@@ -34,14 +34,13 @@ const getExtendedGlobalFunctions = ({
       )
     }
     console.log(
-      serializeElement(
-        rootChildren[foundChildName],
-        val,
-        {},
-        customQueries,
-        globalFunctions,
+      serializeElement({
+        wiringItem: rootChildren[foundChildName],
+        element: val,
         getWithinElementCustomFunctions,
-      ),
+        customQueryMap,
+        globalFunctions,
+      }),
     )
   }
 
@@ -52,7 +51,7 @@ const getExtendedGlobalFunctions = ({
 
 const getGlobalFunctions = ({
   getCustomGlobalFunctions,
-  customQueries,
+  customQueryMap,
   getWithinElementCustomFunctions,
   rootChildren,
 }) => {
@@ -68,7 +67,7 @@ const getGlobalFunctions = ({
   }
   const extendGlobalFunctions = getExtendedGlobalFunctions({
     globalFunctions,
-    customQueries,
+    customQueryMap,
     getWithinElementCustomFunctions,
     rootChildren,
   })

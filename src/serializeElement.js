@@ -5,15 +5,13 @@ import {getQueryFunction, uppercaseFirstLetter} from './functionHelpers'
 import getQueryFunctions from './getQueryFunctions'
 import getWiringWithTypesApplied from './getWiringWithTypesApplied'
 
-const serializeElement = (
+const serializeElement = ({
   wiringItem,
   element,
-  customFunctions,
-  customQueries,
-  globalFunctions,
   getWithinElementCustomFunctions,
-  rootChildren,
-) => {
+  customQueryMap,
+  globalFunctions,
+}) => {
   const renderFunctions = within(element)
 
   const getAllWithinElementFunctions = ({
@@ -22,7 +20,7 @@ const serializeElement = (
   }) => {
     const queryFunctions = getQueryFunctions({
       element: currentElement,
-      queryMap: customQueries,
+      customQueryMap,
       globalFunctions,
       renderFunctions: currentRenderFunctions,
     })
@@ -33,7 +31,6 @@ const serializeElement = (
       renderFunctions: currentRenderFunctions,
       queryFunctions,
       globalFunctions,
-      rootChildren,
     })
 
     return {
@@ -71,17 +68,26 @@ const serializeElement = (
         baseElement: document.body,
         queryType: 'query',
       })
+
+      //     ? serializeElement(
+      //   child,
+      //   childElement,
+      //   customFunctions,
+      //   customQueries,
+      //   globalFunctions,
+      //   getWithinElementCustomFunctions,
+      // )
+
       const childElements = isMultiple ? query(findValue) : [query(findValue)]
       const childStrings = childElements.map(childElement =>
         childElement
-          ? serializeElement(
-              child,
-              childElement,
-              customFunctions,
-              customQueries,
-              globalFunctions,
+          ? serializeElement({
+              wiringItem: child,
+              element: childElement,
               getWithinElementCustomFunctions,
-            )
+              customQueryMap,
+              globalFunctions,
+            })
           : undefined,
       )
       const baseFullChildName = `${childName}String`
