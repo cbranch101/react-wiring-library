@@ -3,62 +3,7 @@ import getWiringFunctions from './getWiringFunctions'
 import getQueryFunctions from './getQueryFunctions'
 import getWithinElementFunctions from './getWithinElementFunctions'
 
-const {within, render: defaultRender} = baseRootFunctions
-
-export const getAllFunctions = (
-  baseFunctions,
-  globalFunctions,
-  getWithinElementCustomFunctions,
-  customQueries,
-) => {
-  const {container, baseElement = document.body} = baseFunctions
-  const queryFunctions = getQueryFunctions({
-    element: container,
-    queryMap: customQueries,
-    globalFunctions,
-    renderFunctions: baseFunctions,
-  })
-
-  const funcs = {
-    ...baseFunctions,
-    ...queryFunctions,
-  }
-  const {debug} = funcs
-
-  const wrappedWithin = element => {
-    const returnFromWithin = within(element)
-    return getAllFunctions(
-      {
-        ...returnFromWithin,
-        container: element,
-        baseElement,
-        debug,
-      },
-      globalFunctions,
-      getWithinElementCustomFunctions,
-      customQueries,
-    )
-  }
-
-  const newFunctions = {
-    ...funcs,
-    ...globalFunctions,
-  }
-  const withinElementFunctions = getWithinElementFunctions({
-    element: container,
-    getCustomFunctions: getWithinElementCustomFunctions,
-    renderFunctions: {
-      ...baseFunctions,
-      within: wrappedWithin,
-    },
-    queryFunctions,
-    globalFunctions,
-  })
-  return {
-    ...newFunctions,
-    ...withinElementFunctions,
-  }
-}
+const {render: defaultRender} = baseRootFunctions
 
 export default ({
   render = defaultRender,
