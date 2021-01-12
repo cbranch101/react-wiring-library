@@ -88,6 +88,7 @@ describe('Custom Functions', () => {
       })
     })
   })
+
   describe('when customFunctions is provided in options', () => {
     describe('and a withinElement function is provided', () => {
       test('all returned functions should be available from every find function and serialize', async () => {
