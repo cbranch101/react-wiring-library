@@ -78,21 +78,15 @@ describe('Custom Functions', () => {
         ])
       })
     })
-    // describe('in the element context', () => {
-    //   describe('if the current element has a data-testid attribute', () => {
-    //     test('testId should be returned', async () => {
-    //       const {findWrapper} = render(fixture)
-    //       const allStuff = await findWrapper()
-    //       console.log(allStuff)
-    //       expect(testId).toEqual('wrapper')
-    //     })
-    //     // move tests from default globalFunctions
-    //     // add click
-    //   })
-    //   test('all element context functions should be available at each level', () => {
-    //     // confirm that the same function is available at three levels
-    //   })
-    // })
+    describe('in the element context', () => {
+      describe('if the current element has a data-testid attribute', () => {
+        test('testId should be returned', async () => {
+          const {findWrapper} = render(fixture)
+          const {testId} = await findWrapper()
+          expect(testId).toEqual('wrapper')
+        })
+      })
+    })
   })
   describe('when customFunctions is provided in options', () => {
     describe('and a withinElement function is provided', () => {
@@ -112,10 +106,66 @@ describe('Custom Functions', () => {
         const {isDisabled} = await findWrapper()
         expect(isDisabled()).toEqual(false)
       })
+      test('all required functions types should be available from withinElement builder function', async () => {
+        const options = {
+          customQueries: {
+            // this wont' actually work, but all I'm trying to do is verify that the functions
+            // are being passed correctly
+            IconName: () => {},
+          },
+          customFunctions: {
+            withinElement: ({
+              customGlobalFunction,
+              clickElement,
+              serialize,
+              click,
+              findByIconName,
+              eliminateByText,
+              findByText,
+            }) => {
+              return {
+                getAvailableFunctionTypes: () => ({
+                  customGlobal: !!customGlobalFunction,
+                  defaultGlobal: !!clickElement,
+                  extendedGlobal: !!serialize,
+                  defaultWithinElement: !!click,
+                  customQueries: !!findByIconName,
+                  extendedQueryTypes: !!eliminateByText,
+                  standardFunctions: !!findByText,
+                }),
+              }
+            },
+            global: () => ({
+              customGlobalFunction: () => {},
+            }),
+          },
+        }
+        const render = getRender(wiring, options)
+
+        const {findWrapper} = render(fixture)
+        const {getAvailableFunctionTypes} = await findWrapper()
+        expect(getAvailableFunctionTypes()).toMatchSnapshot(
+          'available function types',
+        )
+      })
     })
     describe('and a global function is provided', () => {
-      test('all returned functions should available in every find function, serialize and be returned from render', () => {
-        // pass in a global function, confirm that it's available and works
+      test('the returned global functions should be available from every level with the right types passed in', () => {
+        const options = {
+          customFunctions: {
+            global: ({clickElement}) => ({
+              getAvailableFunctionTypes: () => ({
+                defaultGlobal: !!clickElement,
+              }),
+            }),
+          },
+        }
+        const render = getRender(wiring, options)
+
+        const {getAvailableFunctionTypes} = render(fixture)
+        expect(getAvailableFunctionTypes()).toMatchSnapshot(
+          'available function types',
+        )
       })
     })
   })

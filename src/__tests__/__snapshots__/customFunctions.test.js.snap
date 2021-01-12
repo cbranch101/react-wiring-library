@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Functions when customFunctions is provided in options and a global function is provided the returned global functions should be available from every level with the right types passed in: available function types 1`] = `
+Object {
+  "defaultGlobal": true,
+}
+`;
+
+exports[`Custom Functions when customFunctions is provided in options and a withinElement function is provided all required functions types should be available from withinElement builder function: available function types 1`] = `
+Object {
+  "customGlobal": true,
+  "customQueries": true,
+  "defaultGlobal": true,
+  "defaultWithinElement": true,
+  "extendedGlobal": true,
+  "extendedQueryTypes": true,
+  "standardFunctions": true,
+}
+`;
