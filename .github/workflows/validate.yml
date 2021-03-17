@@ -26,9 +26,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: 📥 Download deps
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+        run: yarn install
 
       - name: ▶️ Run validate script
         run: yarn validate
