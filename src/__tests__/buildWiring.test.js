@@ -63,7 +63,7 @@ const wiring = {
           findValue: new RegExp('^Total value of counters'),
           findType: 'text',
           shouldFindInBaseElement: true,
-          serialize: val => val.textContent,
+          serialize: (val) => val.textContent,
         },
         counterList: {
           findValue: 'list',
@@ -75,7 +75,7 @@ const wiring = {
             counter: {
               isMultiple: true,
               findValue: new RegExp('^counter'),
-              getCurrentType: val => {
+              getCurrentType: (val) => {
                 const type = val.getAttribute('data-type')
                 return type === 'default' ? undefined : type
               },
@@ -216,12 +216,11 @@ describe('buildWiring helper', () => {
     await assertErrors()
   })
   test('should be possible to call manually call serialize', async () => {
-    jest.spyOn(console, 'log')
     const render = getRender(wiring)
     const {findCounterList, serialize} = render(fixture)
     const {counterContainer} = await findCounterList()
-    serialize(counterContainer)
-    expect(console.log.mock.calls[0][0]).toMatchSnapshot(
+    const firstString = serialize(counterContainer)
+    expect(firstString).toMatchSnapshot(
       'initial render passed into console.log',
     )
     expect(() => serialize({foo: 'bar'})).toThrow(
