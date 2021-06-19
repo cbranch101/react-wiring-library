@@ -6,8 +6,8 @@ const getSerializeLog = ({
   getWithinElementCustomFunctions,
   customQueryMap,
   globalFunctions,
-}) => val => {
-  const foundChildName = Object.keys(rootChildren).find(childName =>
+}) => (val) => {
+  const foundChildName = Object.keys(rootChildren).find((childName) =>
     matchesTestId(val, rootChildren[childName].findValue),
   )
   if (!foundChildName) {
@@ -15,15 +15,13 @@ const getSerializeLog = ({
       "Object can't be serialzied,  make sure it's defined in wiring",
     )
   }
-  console.log(
-    serializeElement({
-      wiringItem: rootChildren[foundChildName],
-      element: val,
-      getWithinElementCustomFunctions,
-      customQueryMap,
-      globalFunctions,
-    }),
-  )
+  return serializeElement({
+    wiringItem: rootChildren[foundChildName],
+    element: val,
+    getWithinElementCustomFunctions,
+    customQueryMap,
+    globalFunctions,
+  })
 }
 
 export default getSerializeLog
