@@ -7,12 +7,13 @@ const Icon = ({name, onClick}) => <span onClick={onClick} xlinkHref={name} />
 const IconControls = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [page, setPage] = useState(0)
+
   return (
     <div data-testid="controls">
       <button
         data-testid="show"
         onClick={() =>
-          setTimeout(() => setIsOpen(prevIsOpen => !prevIsOpen), 20)
+          setTimeout(() => setIsOpen((prevIsOpen) => !prevIsOpen), 20)
         }
       >
         {isOpen ? 'Close' : 'Open'}
@@ -21,11 +22,11 @@ const IconControls = () => {
         <Fragment>
           <Icon
             name="forward"
-            onClick={() => setPage(prevPage => prevPage + 1)}
+            onClick={() => setPage((prevPage) => prevPage + 1)}
           />
           <Icon
             name="backward"
-            onClick={() => setPage(prevPage => prevPage - 1)}
+            onClick={() => setPage((prevPage) => prevPage - 1)}
           />
         </Fragment>
       )}
@@ -100,7 +101,7 @@ const wiring = {
       children: {
         showButton: {
           findValue: 'show',
-          serialize: val => `[${val.textContent}]`,
+          serialize: (val) => `[${val.textContent}]`,
         },
         forwardIcon: {
           findValue: 'forward',
@@ -115,7 +116,7 @@ const wiring = {
         page: {
           findValue: /^Page:/,
           findType: 'text',
-          serialize: val => val.textContent,
+          serialize: (val) => val.textContent,
         },
       },
     },
