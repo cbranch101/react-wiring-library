@@ -1,4 +1,8 @@
-import {buildQueries, waitForElement, wait} from '@testing-library/react'
+import {
+  buildQueries,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react'
 
 const getQueriesFromFunction = (func, type) => {
   const getMultipleError = (c, findValue) =>
@@ -69,25 +73,17 @@ const getExtraQueryFunctionsForAllTypes = ({
   }
 
   return baseTypes.reduce((memo, typeName) => {
-    const buildFunctions = ({getByType, queryByType}) => {
-      const waitForType = input => waitForElement(() => getByType(input))
-      const clickType = input => clickElement(getByType(input))
-      const makeSureTypeIsGone = input => queryByType(input) === null
-      const waitForTypeAndClick = async input => {
+    const buildFunctions = ({getByType}) => {
+      const waitForType = (input) => waitFor(() => getByType(input))
+      const clickType = (input) => clickElement(getByType(input))
+      const waitForTypeAndClick = async (input) => {
         const element = await waitForType(input)
         clickElement(element)
         return element
       }
 
-      const eliminateByType = input => {
-        return wait(() => {
-          if (!makeSureTypeIsGone(input)) {
-            throw Error(
-              `${typeName} ${input} is still found in the dom ` +
-                'it was supposed to be removed ',
-            )
-          }
-        })
+      const eliminateByType = (input) => {
+        return waitForElementToBeRemoved(() => getByType(input))
       }
 
       return {

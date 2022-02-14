@@ -23,10 +23,10 @@ const getRender = (wiring, config = {}) => {
     rootChildren: children,
   })
 
-  Object.keys(wiring.children).forEach(key => {
+  Object.keys(wiring.children).forEach((key) => {
     expect.addSnapshotSerializer({
-      test: val => matchesTestId(val, wiring.children[key].findValue),
-      print: val => {
+      test: (val) => matchesTestId(val, wiring.children[key].findValue),
+      print: (val) => {
         return serializeElement({
           wiringItem: wiring.children[key],
           element: val,
