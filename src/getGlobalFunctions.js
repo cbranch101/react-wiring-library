@@ -1,20 +1,8 @@
-import {fireEvent, waitForDomChange, wait} from '@testing-library/react'
 import getSerializeLog from './getSerializeLog'
 
-const getDefaultGlobalFunctions = () => ({
-  fireEvent,
-  wait,
-  clickElement: element => fireEvent.click(element),
-  typeIntoElement: (text, element) => {
-    fireEvent.change(element, {target: {value: text}})
-  },
-  focusElement: element => {
-    fireEvent.focus(element)
-  },
-  blurElement: element => {
-    fireEvent.blur(element)
-  },
-  waitForDomChange,
+const getDefaultGlobalFunctions = (engine) => () => ({
+  ...engine.events,
+  ...engine.includedInGlobal,
 })
 
 const getExtendedGlobalFunctions = ({
@@ -34,14 +22,13 @@ const getExtendedGlobalFunctions = ({
   }
 }
 
-const getGlobalFunctions = ({
+const getGlobalFunctions = (engine) => ({
   getCustomGlobalFunctions,
   customQueryMap,
   getWithinElementCustomFunctions,
   rootChildren,
 }) => {
-  const defaultGlobalFunctions = getDefaultGlobalFunctions()
-
+  const defaultGlobalFunctions = getDefaultGlobalFunctions(engine)()
   const customGlobalFunctions = getCustomGlobalFunctions({
     ...defaultGlobalFunctions,
   })

@@ -1,22 +1,32 @@
-import {render as defaultRender} from '@testing-library/react'
+import * as defaultLibrary from '@testing-library/react'
 import getGlobalFunctions from './getGlobalFunctions'
 import serializeElement from './serializeElement'
 import {matchesTestId} from './helpers'
 import getTestFunctions from './getTestFunctions'
+import getEngine from './getEngine'
+
+const {render: defaultRender} = defaultLibrary
 
 const getRender = (wiring, config = {}) => {
   const {
     customFunctions = {},
     customQueries: customQueryMap = {},
     render: renderTest = defaultRender,
+    engine: engineInput = {
+      type: 'react',
+      library: defaultLibrary,
+    },
   } = config
+
+  const engine = getEngine(engineInput)
+
   const {
     global: getCustomGlobalFunctions = () => ({}),
     withinElement: getWithinElementCustomFunctions = () => ({}),
   } = customFunctions
   const {children, extend} = wiring
 
-  const globalFunctions = getGlobalFunctions({
+  const globalFunctions = getGlobalFunctions(engine)({
     getCustomGlobalFunctions,
     getWithinElementCustomFunctions,
     customQueryMap,
