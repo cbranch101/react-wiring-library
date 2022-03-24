@@ -37,7 +37,7 @@ const getRender = (wiring, config = {}) => {
     expect.addSnapshotSerializer({
       test: (val) => matchesTestId(val, wiring.children[key].findValue),
       print: (val) => {
-        return serializeElement({
+        return serializeElement(engine)({
           wiringItem: wiring.children[key],
           element: val,
           getWithinElementCustomFunctions,

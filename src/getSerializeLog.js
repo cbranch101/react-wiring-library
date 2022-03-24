@@ -1,7 +1,7 @@
 import {matchesTestId} from './helpers'
 import serializeElement from './serializeElement'
 
-const getSerializeLog = ({
+const getSerializeLog = (engine) => ({
   rootChildren,
   getWithinElementCustomFunctions,
   customQueryMap,
@@ -15,7 +15,7 @@ const getSerializeLog = ({
       "Object can't be serialzied,  make sure it's defined in wiring",
     )
   }
-  return serializeElement({
+  return serializeElement(engine)({
     wiringItem: rootChildren[foundChildName],
     element: val,
     getWithinElementCustomFunctions,

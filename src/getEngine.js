@@ -1,6 +1,6 @@
 const engineMap = {
   react: (library) => {
-    const {waitFor, wait, fireEvent, waitForDomChange} = library
+    const {waitFor, wait, fireEvent, waitForDomChange, within} = library
 
     const getBasicEventFunction = (name) => {
       return (element) => fireEvent[name](element)
@@ -13,6 +13,7 @@ const engineMap = {
         wait,
         fireEvent,
       },
+      within,
       events: {
         clickElement: getBasicEventFunction('click'),
         focusElement: getBasicEventFunction('focus'),

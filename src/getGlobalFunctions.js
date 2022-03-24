@@ -5,13 +5,13 @@ const getDefaultGlobalFunctions = (engine) => () => ({
   ...engine.includedInGlobal,
 })
 
-const getExtendedGlobalFunctions = ({
+const getExtendedGlobalFunctions = (engine) => ({
   rootChildren,
   customQueryMap,
   getWithinElementCustomFunctions,
   globalFunctions,
 }) => {
-  const serialize = getSerializeLog({
+  const serialize = getSerializeLog(engine)({
     rootChildren,
     getWithinElementCustomFunctions,
     customQueryMap,
@@ -37,7 +37,7 @@ const getGlobalFunctions = (engine) => ({
     ...defaultGlobalFunctions,
     ...customGlobalFunctions,
   }
-  const extendGlobalFunctions = getExtendedGlobalFunctions({
+  const extendGlobalFunctions = getExtendedGlobalFunctions(engine)({
     globalFunctions,
     customQueryMap,
     getWithinElementCustomFunctions,

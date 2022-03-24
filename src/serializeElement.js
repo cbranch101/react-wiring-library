@@ -1,17 +1,17 @@
-import {within} from '@testing-library/react'
 import {combine, uppercaseFirstLetter} from './helpers'
 import getWithinElementFunctions from './getWithinElementFunctions'
 import getQueryFunctions from './getQueryFunctions'
 import getWiringWithTypesApplied from './getWiringWithTypesApplied'
 import getQueryFunction from './getQueryFunction'
 
-const serializeElement = ({
+const serializeElement = (engine) => ({
   wiringItem,
   element,
   getWithinElementCustomFunctions,
   customQueryMap,
   globalFunctions,
 }) => {
+  const {within} = engine
   const renderFunctions = within(element)
 
   const getAllWithinElementFunctions = ({
@@ -79,9 +79,9 @@ const serializeElement = ({
       // )
 
       const childElements = isMultiple ? query(findValue) : [query(findValue)]
-      const childStrings = childElements.map(childElement =>
+      const childStrings = childElements.map((childElement) =>
         childElement
-          ? serializeElement({
+          ? serializeElement(engine)({
               wiringItem: child,
               element: childElement,
               getWithinElementCustomFunctions,
