@@ -2,7 +2,7 @@ import getWiringFunctions from './getWiringFunctions'
 import getQueryFunctions from './getQueryFunctions'
 import getWithinElementFunctions from './getWithinElementFunctions'
 
-export default ({
+export default (engine) => ({
   renderFunctions,
   customQueryMap,
   getWithinElementCustomFunctions,
@@ -12,7 +12,7 @@ export default ({
 }) => {
   const {baseElement} = renderFunctions
 
-  return getWiringFunctions({
+  return getWiringFunctions(engine)({
     wiringChildren,
     renderFunctions,
     baseElement,
@@ -22,7 +22,7 @@ export default ({
       renderFunctions: currentRenderFunctions,
       element,
     }) => {
-      const queryFunctions = getQueryFunctions({
+      const queryFunctions = getQueryFunctions(engine)({
         element,
         customQueryMap,
         globalFunctions,

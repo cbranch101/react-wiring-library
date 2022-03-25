@@ -1,9 +1,8 @@
-import {within} from '@testing-library/react'
 import {uppercaseFirstLetter} from './helpers'
 import getQueryFunction from './getQueryFunction'
 import getWiringWithTypesApplied from './getWiringWithTypesApplied'
 
-const getWiringFunctions = ({
+const getWiringFunctions = (engine) => ({
   wiringChildren,
   baseElement,
   renderFunctions,
@@ -11,6 +10,7 @@ const getWiringFunctions = ({
   extend = () => ({}),
   getAllWithinElementFunctions,
 }) => {
+  const {within} = engine
   const withinElementFunctions = getAllWithinElementFunctions({
     renderFunctions,
     element,
@@ -28,7 +28,7 @@ const getWiringFunctions = ({
         } = wiringChild
         const {index, filter} = findArgs
         const performFind = async () => {
-          const query = getQueryFunction({
+          const query = getQueryFunction(engine)({
             baseElement,
             functions: withinElementFunctions,
             isInBase: shouldFindInBaseElement,
@@ -52,7 +52,7 @@ const getWiringFunctions = ({
             return element
           }
           if (filter !== undefined) {
-            const filteredElements = foundElements.filter(element =>
+            const filteredElements = foundElements.filter((element) =>
               filter(element, element.getAttribute('data-testid')),
             )
 
@@ -98,7 +98,7 @@ const getWiringFunctions = ({
         return {
           [childName]: childElement,
           ...withinElementFunctionsForChild,
-          ...getWiringFunctions({
+          ...getWiringFunctions(engine)({
             wiringChildren: children,
             renderFunctions: childRenderFunctions,
             extend,

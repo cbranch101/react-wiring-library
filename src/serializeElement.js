@@ -18,7 +18,7 @@ const serializeElement = (engine) => ({
     element: currentElement,
     renderFunctions: currentRenderFunctions,
   }) => {
-    const queryFunctions = getQueryFunctions({
+    const queryFunctions = getQueryFunctions(engine)({
       element: currentElement,
       customQueryMap,
       globalFunctions,
@@ -60,7 +60,7 @@ const serializeElement = (engine) => ({
         isMultiple,
         shouldFindInBaseElement,
       } = child
-      const query = getQueryFunction({
+      const query = getQueryFunction(engine)({
         functions: withinElementFunctions,
         isInBase: shouldFindInBaseElement,
         targetType: uppercaseFirstLetter(findType),

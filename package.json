@@ -40,7 +40,8 @@
             "import/no-unassigned-import": "off",
             "import/named": "off",
             "no-shadow": "off",
-            "jsx-a11y/click-events-have-key-events": "off"
+            "jsx-a11y/click-events-have-key-events": "off",
+            "testing-library/prefer-screen-queries": "off"
         },
         "parserOptions": {
             "ecmaFeatures": {

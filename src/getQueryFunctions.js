@@ -1,10 +1,4 @@
-import {
-  buildQueries,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
-
-const getQueriesFromFunction = (func, type) => {
+const getQueriesFromFunction = ({buildQueries}) => (func, type) => {
   const getMultipleError = (c, findValue) =>
     `Found multiple elements with ${type} of ${findValue}`
   const getMissingError = (c, findValue) =>
@@ -34,12 +28,12 @@ const getQueriesFromFunction = (func, type) => {
   )
 }
 
-const getCustomQueryFunctions = ({element, customQueryMap}) => {
+const getCustomQueryFunctions = (engine) => ({element, customQueryMap}) => {
   const customQueries = Object.keys(customQueryMap).reduce((memo, type) => {
     const func = customQueryMap[type]
     return {
       ...memo,
-      ...getQueriesFromFunction(func, type),
+      ...getQueriesFromFunction(engine)(func, type),
     }
   }, {})
   return Object.keys(customQueries).reduce(
@@ -52,6 +46,9 @@ const getCustomQueryFunctions = ({element, customQueryMap}) => {
 }
 
 const getExtraQueryFunctionsForAllTypes = ({
+  waitFor,
+  waitForElementToBeRemoved,
+}) => ({
   renderFunctions,
   customQueryFunctions,
   globalFunctions,
@@ -103,18 +100,20 @@ const getExtraQueryFunctionsForAllTypes = ({
   }, {})
 }
 
-const getQueryFunctions = ({
+const getQueryFunctions = (engine) => ({
   element,
   customQueryMap = {},
   renderFunctions,
   globalFunctions,
 }) => {
-  const customQueryFunctions = getCustomQueryFunctions({
+  const customQueryFunctions = getCustomQueryFunctions(engine)({
     element,
     customQueryMap,
   })
 
-  const extraQueryFunctionsForAllTypes = getExtraQueryFunctionsForAllTypes({
+  const extraQueryFunctionsForAllTypes = getExtraQueryFunctionsForAllTypes(
+    engine,
+  )({
     customQueryMap,
     renderFunctions,
     customQueryFunctions,

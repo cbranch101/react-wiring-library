@@ -1,6 +1,15 @@
 const engineMap = {
   react: (library) => {
-    const {waitFor, wait, fireEvent, waitForDomChange, within} = library
+    const {
+      waitFor,
+      wait,
+      fireEvent,
+      waitForDomChange,
+      waitForElementToBeRemoved,
+      within,
+      buildQueries,
+      render,
+    } = library
 
     const getBasicEventFunction = (name) => {
       return (element) => fireEvent[name](element)
@@ -8,17 +17,55 @@ const engineMap = {
 
     return {
       includedInGlobal: {
-        waitFor,
-        waitForDomChange,
-        wait,
         fireEvent,
+        waitForDomChange,
       },
+      waitFor,
+      wait,
       within,
+      render,
+      buildQueries,
+      waitForElementToBeRemoved,
       events: {
         clickElement: getBasicEventFunction('click'),
         focusElement: getBasicEventFunction('focus'),
         typeIntoElement: (text, element) => {
-          fireEvent.change(element, {target: {value: text}})
+          return fireEvent.change(element, {target: {value: text}})
+        },
+        blurElement: getBasicEventFunction('blur'),
+      },
+    }
+  },
+  storybook: (library) => {
+    const {
+      waitFor,
+      wait,
+      userEvent,
+      waitForElementToBeRemoved,
+      within,
+      buildQueries,
+    } = library
+
+    const getBasicEventFunction = (name) => {
+      return (element) => userEvent[name](element)
+    }
+
+    return {
+      includedInGlobal: {
+        userEvent,
+      },
+      waitFor,
+      wait,
+      within,
+      blockSerialize: true,
+      render: (canvas) => within(canvas),
+      buildQueries,
+      waitForElementToBeRemoved,
+      events: {
+        clickElement: getBasicEventFunction('click'),
+        focusElement: getBasicEventFunction('focus'),
+        typeIntoElement: (text, options, element) => {
+          return userEvent.type(element, text, options)
         },
         blurElement: getBasicEventFunction('blur'),
       },

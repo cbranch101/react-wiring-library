@@ -1,6 +1,5 @@
-import {within} from '@testing-library/react'
 import {uppercaseFirstLetter} from './helpers'
-const getQueryFunction = ({
+const getQueryFunction = ({within}) => ({
   isMultiple,
   functions,
   queryType,
