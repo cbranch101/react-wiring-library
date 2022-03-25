@@ -15,7 +15,7 @@
     },
     "devDependencies": {
         "@testing-library/react": "^12.1.2",
-        "kcd-scripts": "^8.1.1",
+        "kcd-scripts": "12.1.0",
         "react": "16.9.0",
         "react-dom": "16.9.0"
     },
