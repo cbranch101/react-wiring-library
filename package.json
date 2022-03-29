@@ -11,9 +11,10 @@
     "private": false,
     "scripts": {
         "build": "node ./scripts/build.js",
-        "test": "jest --watch",
+        "test-base": "jest",
+        "test": "npm run test-base --watch",
         "lint": "node ./node_modules/eslint/bin/eslint.js src/**",
-        "validate": "kcd-scripts validate"
+        "validate": "npm run lint && npm run test-base --ci"
     },
     "devDependencies": {
         "@testing-library/react": "^12.1.2",
