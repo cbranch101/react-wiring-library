@@ -1,8 +1,5 @@
-import React, {Fragment, useState} from 'react'
-import {queryHelpers} from '@testing-library/react'
+import React from 'react'
 import {getRender} from '../index'
-const {queryAllByAttribute} = queryHelpers
-const Icon = ({name, onClick}) => <span onClick={onClick} xlinkHref={name} />
 
 const Root = () => {
   return (
@@ -26,12 +23,12 @@ const wiring = {
 const functionReduceTest = () => {
   const plugins = [
     {
-      getFuncs: funcs => {
+      getFuncs: (funcs) => {
         return {two: () => funcs.one()}
       },
     },
     {
-      getFuncs: funcs => {
+      getFuncs: (funcs) => {
         return {two: () => 'foo', three: () => funcs.two()}
       },
     },
@@ -41,7 +38,7 @@ const functionReduceTest = () => {
     return plugins.reduceRight(
       (memo, plugin) => {
         const {getFuncs} = plugin
-        return funcs => {
+        return (funcs) => {
           const updatedFuncs = {
             ...funcs,
             ...getFuncs(funcs),
@@ -49,7 +46,7 @@ const functionReduceTest = () => {
           return memo(updatedFuncs)
         }
       },
-      funcs => funcs,
+      (funcs) => funcs,
     )
   }
   const getAllFunctions = getGetAllFunctions()
@@ -70,7 +67,7 @@ describe('Plugins', () => {
       const config = {
         plugins: [
           {
-            getWithinElementFunctions: element => {
+            getWithinElementFunctions: (element) => {
               return {
                 getCustomValue: () => element.getAttribute('data-custom-value'),
               }

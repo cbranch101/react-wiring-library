@@ -1,65 +1,61 @@
-import {fireEvent, waitForDomChange, wait} from '@testing-library/react'
 import getSerializeLog from './getSerializeLog'
 
-const getDefaultGlobalFunctions = () => ({
-  fireEvent,
-  wait,
-  clickElement: element => fireEvent.click(element),
-  typeIntoElement: (text, element) => {
-    fireEvent.change(element, {target: {value: text}})
-  },
-  focusElement: element => {
-    fireEvent.focus(element)
-  },
-  blurElement: element => {
-    fireEvent.blur(element)
-  },
-  waitForDomChange,
+const getDefaultGlobalFunctions = (engine) => () => ({
+  ...engine.events,
+  ...engine.includedInGlobal,
+  waitFor: engine.waitFor,
+  wait: engine.wait,
 })
 
-const getExtendedGlobalFunctions = ({
-  rootChildren,
-  customQueryMap,
-  getWithinElementCustomFunctions,
-  globalFunctions,
-}) => {
-  const serialize = getSerializeLog({
+const getExtendedGlobalFunctions =
+  (engine) =>
+  ({
     rootChildren,
-    getWithinElementCustomFunctions,
     customQueryMap,
+    getWithinElementCustomFunctions,
     globalFunctions,
-  })
-  return {
-    serialize,
+  }) => {
+    if (!engine.blockSerialize) {
+      const serialize = getSerializeLog(engine)({
+        rootChildren,
+        getWithinElementCustomFunctions,
+        customQueryMap,
+        globalFunctions,
+      })
+      return {
+        serialize,
+      }
+    }
+    return {}
   }
-}
 
-const getGlobalFunctions = ({
-  getCustomGlobalFunctions,
-  customQueryMap,
-  getWithinElementCustomFunctions,
-  rootChildren,
-}) => {
-  const defaultGlobalFunctions = getDefaultGlobalFunctions()
-
-  const customGlobalFunctions = getCustomGlobalFunctions({
-    ...defaultGlobalFunctions,
-  })
-
-  const globalFunctions = {
-    ...defaultGlobalFunctions,
-    ...customGlobalFunctions,
-  }
-  const extendGlobalFunctions = getExtendedGlobalFunctions({
-    globalFunctions,
+const getGlobalFunctions =
+  (engine) =>
+  ({
+    getCustomGlobalFunctions,
     customQueryMap,
     getWithinElementCustomFunctions,
     rootChildren,
-  })
-  return {
-    ...globalFunctions,
-    ...extendGlobalFunctions,
+  }) => {
+    const defaultGlobalFunctions = getDefaultGlobalFunctions(engine)()
+    const customGlobalFunctions = getCustomGlobalFunctions({
+      ...defaultGlobalFunctions,
+    })
+
+    const globalFunctions = {
+      ...defaultGlobalFunctions,
+      ...customGlobalFunctions,
+    }
+    const extendGlobalFunctions = getExtendedGlobalFunctions(engine)({
+      globalFunctions,
+      customQueryMap,
+      getWithinElementCustomFunctions,
+      rootChildren,
+    })
+    return {
+      ...globalFunctions,
+      ...extendGlobalFunctions,
+    }
   }
-}
 
 export default getGlobalFunctions

@@ -1,4 +1,3 @@
-import {cleanup} from '@testing-library/react'
 import React from 'react'
 import {combine} from '../helpers'
 import {getRender} from '../index'
@@ -6,7 +5,6 @@ import CounterList from '../CounterList'
 
 afterEach(() => {
   jest.clearAllMocks()
-  cleanup()
 })
 
 const fixture = (

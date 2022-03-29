@@ -12,7 +12,7 @@ const Counter = ({type, setCount, name, count, increment, decrement}) => {
     }
     if (type === 'addTen') {
       return (
-        <button onClick={() => setCount(prevCount => prevCount + 10)}>
+        <button onClick={() => setCount((prevCount) => prevCount + 10)}>
           Add Ten
         </button>
       )
@@ -34,7 +34,7 @@ const List = ({listName, counters, renderCounter}) => {
   return (
     <div data-testid="list">
       <span data-testid="list-name">{listName}</span>
-      <ul>{counters.map(counter => renderCounter({counter}))}</ul>
+      <ul>{counters.map((counter) => renderCounter({counter}))}</ul>
     </div>
   )
 }
@@ -56,11 +56,11 @@ const Summary = ({counters}) => {
   )
 }
 
-export default ({listName, counters}) => {
+const CounterList = ({listName, counters}) => {
   const [isShown, setIsShown] = useState(false)
   const [counterValuesByName, setCounterValuesByName] = useState({})
   const updateCountForName = (name, func) => {
-    setCounterValuesByName(prevCounterValuesByName => {
+    setCounterValuesByName((prevCounterValuesByName) => {
       const prevCount = prevCounterValuesByName[name] || 0
       return {
         ...prevCounterValuesByName,
@@ -69,10 +69,12 @@ export default ({listName, counters}) => {
     })
   }
 
-  const increment = name => updateCountForName(name, prevCount => prevCount + 1)
-  const decrement = name => updateCountForName(name, prevCount => prevCount - 1)
+  const increment = (name) =>
+    updateCountForName(name, (prevCount) => prevCount + 1)
+  const decrement = (name) =>
+    updateCountForName(name, (prevCount) => prevCount - 1)
 
-  const mappedCounters = counters.map(counter => ({
+  const mappedCounters = counters.map((counter) => ({
     ...counter,
     count: counterValuesByName[counter.name] || 0,
   }))
@@ -92,7 +94,7 @@ export default ({listName, counters}) => {
                 count={count}
                 increment={() => increment(name)}
                 decrement={() => decrement(name)}
-                setCount={func => updateCountForName(name, func)}
+                setCount={(func) => updateCountForName(name, func)}
               />
             )
           }}
@@ -104,3 +106,5 @@ export default ({listName, counters}) => {
     </div>
   )
 }
+
+export default CounterList

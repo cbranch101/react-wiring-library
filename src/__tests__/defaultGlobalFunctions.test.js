@@ -1,8 +1,5 @@
 import React, {useState} from 'react'
-import {cleanup} from '@testing-library/react'
 import {getRender} from '../index'
-
-afterEach(cleanup)
 
 const Input = () => {
   const [focused, setFocus] = useState(false)
@@ -23,7 +20,7 @@ const blurWiring = {
   children: {
     input: {
       findValue: 'input',
-      serialize: val => {
+      serialize: (val) => {
         const hasFocus = !!val.getAttribute('data-focused')
         return `[${hasFocus ? 'Focused: ' : ''}${val.value}]`
       },

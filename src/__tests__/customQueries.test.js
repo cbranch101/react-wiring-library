@@ -7,12 +7,13 @@ const Icon = ({name, onClick}) => <span onClick={onClick} xlinkHref={name} />
 const IconControls = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [page, setPage] = useState(0)
+
   return (
     <div data-testid="controls">
       <button
         data-testid="show"
         onClick={() =>
-          setTimeout(() => setIsOpen(prevIsOpen => !prevIsOpen), 20)
+          setTimeout(() => setIsOpen((prevIsOpen) => !prevIsOpen), 20)
         }
       >
         {isOpen ? 'Close' : 'Open'}
@@ -21,11 +22,11 @@ const IconControls = () => {
         <Fragment>
           <Icon
             name="forward"
-            onClick={() => setPage(prevPage => prevPage + 1)}
+            onClick={() => setPage((prevPage) => prevPage + 1)}
           />
           <Icon
             name="backward"
-            onClick={() => setPage(prevPage => prevPage - 1)}
+            onClick={() => setPage((prevPage) => prevPage - 1)}
           />
         </Fragment>
       )}
@@ -81,6 +82,7 @@ const wiring = {
           await clickShowButton()
           await findByIconName('forward')
         }
+
         return {
           showIcons,
           findMultipleError: () => findByIconName(/ward$/),
@@ -100,7 +102,7 @@ const wiring = {
       children: {
         showButton: {
           findValue: 'show',
-          serialize: val => `[${val.textContent}]`,
+          serialize: (val) => `[${val.textContent}]`,
         },
         forwardIcon: {
           findValue: 'forward',
@@ -115,7 +117,7 @@ const wiring = {
         page: {
           findValue: /^Page:/,
           findType: 'text',
-          serialize: val => val.textContent,
+          serialize: (val) => val.textContent,
         },
       },
     },
@@ -126,16 +128,14 @@ describe('Custom Queries', () => {
   test('custom queries should work with all built in functions', async () => {
     const render = getRender(wiring, config)
     const {findIconControls} = render(fixture)
-    const {
-      showIcons,
-      showIconsAndGoForward,
-      hideIcons,
-      iconControls,
-    } = await findIconControls()
+    const {showIcons, showIconsAndGoForward, hideIcons, iconControls} =
+      await findIconControls()
     expect(iconControls).toMatchSnapshot('on initial load')
     await showIcons()
+
     expect(iconControls).toMatchSnapshot('after showing icons')
     await hideIcons()
+
     expect(iconControls).toMatchSnapshot('after hiding icons')
     await showIconsAndGoForward()
     expect(iconControls).toMatchSnapshot(
@@ -145,11 +145,8 @@ describe('Custom Queries', () => {
   test('correctly throws errors for custom queries', async () => {
     const render = getRender(wiring, config)
     const {findIconControls} = render(fixture)
-    const {
-      findBadIconName,
-      findMultipleError,
-      showIcons,
-    } = await findIconControls()
+    const {findBadIconName, findMultipleError, showIcons} =
+      await findIconControls()
     await showIcons()
     await expect(findBadIconName()).rejects.toThrow(
       'Unable to find an element with IconName of im-not-valid',
