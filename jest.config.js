@@ -1,6 +1,19 @@
-const {jest: jestConfig} = require('kcd-scripts/config')
-module.exports = Object.assign(jestConfig, {
+// eslint-disable-next-line import/no-extraneous-dependencies
+const {defaults} = require('jest-config')
+module.exports = Object.assign(defaults, {
   testPathIgnorePatterns: ['<rootDir>/src/CounterList.js'],
+  transform: {
+    '^.+\\.js?$': [
+      'esbuild-jest',
+      {
+        loaders: {
+          '.test.js': 'jsx',
+          '.js': 'jsx',
+        },
+      },
+    ],
+  },
+  testEnvironment: 'jsdom',
   coverageThreshold: {
     global: {
       branches: 70,
