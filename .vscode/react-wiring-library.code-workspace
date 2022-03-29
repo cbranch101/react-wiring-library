@@ -24,6 +24,7 @@
       "titleBar.inactiveBackground": "#ac285a99",
       "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#ac285a"
+    "peacock.color": "#ac285a",
+    "eslint.packageManager": "yarn"
   }
 }

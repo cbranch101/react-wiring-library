@@ -49,7 +49,7 @@ const wiring = {
         item: {
           isMultiple: true,
           findValue: 'item',
-          getCurrentType: val => val.getAttribute('data-type'),
+          getCurrentType: (val) => val.getAttribute('data-type'),
           serialize: (val, {nameString}) => {
             return `- ${nameString}`
           },
@@ -61,7 +61,7 @@ const wiring = {
               children: {
                 detailsSpan: {
                   findValue: 'details',
-                  serialize: val => `Details: ${val.textContent}`,
+                  serialize: (val) => `Details: ${val.textContent}`,
                 },
               },
             },
@@ -74,7 +74,7 @@ const wiring = {
           children: {
             name: {
               findValue: 'name',
-              serialize: val => val.textContent,
+              serialize: (val) => val.textContent,
             },
           },
         },
@@ -113,7 +113,7 @@ const multiLevelTypeWiring = {
           types: {
             ...wiring.children.list.children.item.types,
             indent: {
-              getCurrentType: val => val.getAttribute('data-indent-type'),
+              getCurrentType: (val) => val.getAttribute('data-indent-type'),
               types: {
                 dot: {
                   serialize: (val, functions, baseString) =>

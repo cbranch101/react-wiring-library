@@ -82,6 +82,7 @@ const wiring = {
           await clickShowButton()
           await findByIconName('forward')
         }
+
         return {
           showIcons,
           findMultipleError: () => findByIconName(/ward$/),
@@ -127,16 +128,14 @@ describe('Custom Queries', () => {
   test('custom queries should work with all built in functions', async () => {
     const render = getRender(wiring, config)
     const {findIconControls} = render(fixture)
-    const {
-      showIcons,
-      showIconsAndGoForward,
-      hideIcons,
-      iconControls,
-    } = await findIconControls()
+    const {showIcons, showIconsAndGoForward, hideIcons, iconControls} =
+      await findIconControls()
     expect(iconControls).toMatchSnapshot('on initial load')
     await showIcons()
+
     expect(iconControls).toMatchSnapshot('after showing icons')
     await hideIcons()
+
     expect(iconControls).toMatchSnapshot('after hiding icons')
     await showIconsAndGoForward()
     expect(iconControls).toMatchSnapshot(
@@ -146,11 +145,8 @@ describe('Custom Queries', () => {
   test('correctly throws errors for custom queries', async () => {
     const render = getRender(wiring, config)
     const {findIconControls} = render(fixture)
-    const {
-      findBadIconName,
-      findMultipleError,
-      showIcons,
-    } = await findIconControls()
+    const {findBadIconName, findMultipleError, showIcons} =
+      await findIconControls()
     await showIcons()
     await expect(findBadIconName()).rejects.toThrow(
       'Unable to find an element with IconName of im-not-valid',

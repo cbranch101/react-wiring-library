@@ -5,12 +5,8 @@ const getDefaultWithinElementFunctions = ({
 }) => {
   const {getByTestId, within} = renderFunctions
 
-  const {
-    clickElement,
-    focusElement,
-    blurElement,
-    typeIntoElement,
-  } = globalFunctions
+  const {clickElement, focusElement, blurElement, typeIntoElement} =
+    globalFunctions
   const getTextContent = (id) => getByTestId(id).textContent
   const testId = element && element.getAttribute('data-testid')
   return {

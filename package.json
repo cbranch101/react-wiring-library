@@ -20,6 +20,7 @@
         "esbuild": "^0.14.27",
         "eslint": "^8.12.0",
         "eslint-config-kentcdodds": "^20.1.0",
+        "prettier": "^2.6.1",
         "react": "16.9.0",
         "react-dom": "16.9.0",
         "vitest": "^0.7.11"

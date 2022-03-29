@@ -7,51 +7,55 @@ const getDefaultGlobalFunctions = (engine) => () => ({
   wait: engine.wait,
 })
 
-const getExtendedGlobalFunctions = (engine) => ({
-  rootChildren,
-  customQueryMap,
-  getWithinElementCustomFunctions,
-  globalFunctions,
-}) => {
-  if (!engine.blockSerialize) {
-    const serialize = getSerializeLog(engine)({
-      rootChildren,
-      getWithinElementCustomFunctions,
-      customQueryMap,
-      globalFunctions,
-    })
-    return {
-      serialize,
-    }
-  }
-  return {}
-}
-
-const getGlobalFunctions = (engine) => ({
-  getCustomGlobalFunctions,
-  customQueryMap,
-  getWithinElementCustomFunctions,
-  rootChildren,
-}) => {
-  const defaultGlobalFunctions = getDefaultGlobalFunctions(engine)()
-  const customGlobalFunctions = getCustomGlobalFunctions({
-    ...defaultGlobalFunctions,
-  })
-
-  const globalFunctions = {
-    ...defaultGlobalFunctions,
-    ...customGlobalFunctions,
-  }
-  const extendGlobalFunctions = getExtendedGlobalFunctions(engine)({
+const getExtendedGlobalFunctions =
+  (engine) =>
+  ({
+    rootChildren,
+    customQueryMap,
+    getWithinElementCustomFunctions,
     globalFunctions,
+  }) => {
+    if (!engine.blockSerialize) {
+      const serialize = getSerializeLog(engine)({
+        rootChildren,
+        getWithinElementCustomFunctions,
+        customQueryMap,
+        globalFunctions,
+      })
+      return {
+        serialize,
+      }
+    }
+    return {}
+  }
+
+const getGlobalFunctions =
+  (engine) =>
+  ({
+    getCustomGlobalFunctions,
     customQueryMap,
     getWithinElementCustomFunctions,
     rootChildren,
-  })
-  return {
-    ...globalFunctions,
-    ...extendGlobalFunctions,
+  }) => {
+    const defaultGlobalFunctions = getDefaultGlobalFunctions(engine)()
+    const customGlobalFunctions = getCustomGlobalFunctions({
+      ...defaultGlobalFunctions,
+    })
+
+    const globalFunctions = {
+      ...defaultGlobalFunctions,
+      ...customGlobalFunctions,
+    }
+    const extendGlobalFunctions = getExtendedGlobalFunctions(engine)({
+      globalFunctions,
+      customQueryMap,
+      getWithinElementCustomFunctions,
+      rootChildren,
+    })
+    return {
+      ...globalFunctions,
+      ...extendGlobalFunctions,
+    }
   }
-}
 
 export default getGlobalFunctions
